@@ -1,0 +1,13 @@
+.cs-login-form {
+    margin-top: 15vh;
+    padding-left: 35%;
+    padding-right: 35%;
+}
+
+@media screen and (max-width: 600px) {
+    .cs-login-form {
+        margin-top: 15vh;
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+}

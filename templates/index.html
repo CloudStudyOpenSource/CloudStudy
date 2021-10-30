@@ -1,0 +1,15 @@
+{% extends "head.html" %}
+
+{% block content %}
+
+    <div class="mdui-container-fluid">
+        <div class="mdui-text-center" style="margin-top: 15vh;">
+            <img src="/static/favicon.png" style="width: 30%;height: 30%;max-width: 250px;max-height: 250px;"></img>
+            <div class="mdui-typo-display-2" style="font-weight: bold;">CloudStudy</div>
+            <p>云学习 | 在线考试系统</p>
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='script/index.js')}}"></script>
+    <script src="{{url_for('static', filename='script/account.js')}}"></script>
+{% endblock %}

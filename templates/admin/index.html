@@ -1,0 +1,28 @@
+{% extends "head.html" %}
+
+{% block content %}
+
+<div class="mdui-container-fluid">
+    <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
+        <a href="#page_dashbroad" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
+        <a href="#page_config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
+        <a href="#page_group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
+        <a href="#page_user" class="mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
+        <a href="#page_exam" class="mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
+        <a href="#page_file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
+    </div>
+    <div style="padding-left: 5%;padding-right: 5%;">
+        <div id="page_dashbroad">
+        </div>
+        <div id="page_config">
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">SiteName</label>
+                <input class="mdui-textfield-input"/>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{url_for('static', filename='script/index.js')}}"></script>
+<script src="{{url_for('static', filename='script/account.js')}}"></script>
+<script src="{{url_for('static', filename='script/admin/admin.js')}}"></script>
+{% endblock %}
