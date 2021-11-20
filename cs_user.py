@@ -5,14 +5,7 @@ from flask import jsonify
 import mysql.connector
 import cs_config
 
-config = {
-    'user': cs_config.mysql_user,
-    'password': cs_config.mysql_password,
-    'host': cs_config.mysql_host,
-    'port': cs_config.mysql_port,
-    'database': cs_config.mysql_database
-}
-con = mysql.connector.connect(**config)
+con = mysql.connector.connect(**cs_config.mysql)
 cur = con.cursor()
 
 cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
