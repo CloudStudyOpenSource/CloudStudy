@@ -1,30 +1,31 @@
-# http://pac-api.timfang.xyz:10002/
-from flask import Flask, request, Response,render_template
-import hashlib
-import json
-import flask
-import time
+# http://pac-api.timfang.xyz:11451/
+from flask import Flask, request, render_template
 from werkzeug.utils import redirect
 import cs_user
-import cs_encrypt
+import os
 
-print(cs_user.api_user_login(
-    "MC13735292967@163.com", "cfa61b8570f11587c8774066f4cfad0a9d4e1f31f29d8a2b8aea26fc59a2b829110c72be2aa96fc4c74b69a0d0bf1c08be3b3fb50605db2192a3bc08e8f5c04b"))
-print(cs_user.user_online("uck"))
 
 app = Flask(__name__)
 
-config={"siteName":"CloudStudy"}
+config = {"siteName": "CloudStudy"}
 
 
 @app.route('/')
 def index():
-    return(render_template('index.html',config=config,title="首页"))
+    return(render_template('index.html', config=config, title="首页"))
+
+
+@app.route('/install')
+def install():
+    if(os.path.exists("./cs-config.json") == False):
+        return (render_template('install/index.html'))
+    else:
+        return(render_template('install/success.html'))
 
 
 @app.route('/login')
 def login():
-    return (render_template('login/index.html',config=config,title="登录"))
+    return (render_template('login/index.html', config=config, title="登录"))
 
 
 @app.route('/register')
@@ -37,6 +38,26 @@ def admin():
     return (render_template('admin/index.html', config=config, title="仪表盘"))
 
 
+@app.route('/admin/config')
+def admin_config():
+    return (render_template('admin/config/index.html', config=config, title="仪表盘_参数设置"))
+
+
+@app.route('/admin/user')
+def admin_user():
+    return (render_template('admin/user/index.html', config=config, title="仪表盘_用户"))
+
+
+@app.route('/admin/exam')
+def admin_exam():
+    return (render_template('admin/exam/index.html', config=config, title="仪表盘_考试"))
+
+
+@app.route('/admin/exam/new')
+def admin_exam_new():
+    return (render_template('admin/exam/new/index.html'))
+
+
 @app.route('/api')
 def api():
     return redirect("/")
@@ -46,20 +67,29 @@ def api():
 def api_login():
     email = request.headers.get('cs_email')
     pwd = request.headers.get('cs_password')
-    return cs_user.api_user_login(email,pwd)
+    return cs_user.api_user_login(email, pwd)
+
 
 @app.route('/api/register')
 def api_register():
     name = request.headers.get('cs_name')
     email = request.headers.get('cs_email')
     pwd = request.headers.get('cs_password')
-    return cs_user.api_user_register(name,email,pwd)
+    return cs_user.api_user_register(name, email, pwd)
+
+
+@app.route('/api/admin/getuser')
+def api_admin_getuser():
+    return cs_user.api_user_getlist()
+
 
 @app.after_request
 def apply_caching(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Method"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "*"
+    if(response.is_json == True):
+        response.data = response.data.decode("unicode-escape")
     return response
 
 

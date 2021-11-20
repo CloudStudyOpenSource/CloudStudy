@@ -1,83 +1,74 @@
 import json
-from os import getuid
 import cs_encrypt
 import time
-#import sqlite3
+from flask import jsonify
+import mysql.connector
+import cs_config
+
+config = {
+    'user': cs_config.mysql_user,
+    'password': cs_config.mysql_password,
+    'host': cs_config.mysql_host,
+    'port': cs_config.mysql_port,
+    'database': cs_config.mysql_database
+}
+con = mysql.connector.connect(**config)
+cur = con.cursor()
+
+cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
+   `uid` INT UNSIGNED AUTO_INCREMENT,
+   `name` CHAR(20),
+   `email` CHAR(250),
+   `password` CHAR(128),
+   `group` INT UNSIGNED,
+   `login_time` DATETIME,
+   `login_token` CHAR(128),
+   PRIMARY KEY (`uid`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
+con.commit()
 
 
-#sql_conn = sqlite3.connect('./data/users/list.db')
-#sql_cur = sql_conn.cursor()
-#
-#sql_cur.execute('''CREATE TABLE IF NOT EXISTS sc
-#           (name TEXT,
-#            email TEXT,
-#            password TEXT);''')
-#
-#sql_conn.commit()
-#sql_cur.close()
-#sql_conn.close()
-
-file_users = open("./data/users/list.json", "r+")
-file_users_json = json.loads(file_users.read())
-
-file_online = open("./data/users/online.json", "r+")
-file_online_json = json.loads(file_online.read())
+def jsonResponse(message, data):
+    return(jsonify({"message": message, "data": data}))
 
 
-def file_users_update():
-    file_users.seek(0)
-    file_users.truncate()
-    file_users.write(json.dumps(file_users_json))
-    file_users.flush()
-    
-def file_online_update():
-    file_online.seek(0)
-    file_online.truncate()
-    file_online.write(json.dumps(file_online_json))
-    file_online.flush()
-
-
-
-
-def verify_user(email, pwd):
-    email = email.lower()
-    pwd = pwd
-    if(email in file_users_json):
-        if(file_users_json[email]["pwd"] == pwd):
-            return True
+def api_user_login(email, pwd):
+    cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
+    fetch = cur.fetchall()
+    if(len(fetch) == 0):
+        return(jsonResponse("error", "用户不存在"))
+    else:
+        if(pwd == fetch[0][3]):
+            ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            # print(ntime)
+            token = cs_encrypt.sha512((json.dumps(
+                {"uid": fetch[0][0], "time": ntime})))
+            cur.execute(
+                '''UPDATE `users` SET `login_token` = %s WHERE `users`.`uid` = %s; ''', (token, fetch[0][0]))
+            cur.execute(
+                '''UPDATE `users` SET `login_time` = %s WHERE `users`.`uid` = %s; ''', (ntime, fetch[0][0]))
+            con.commit()
+            return(jsonResponse("success", token))
         else:
-            return ("密码错误")
+            return(jsonResponse("error", "密码错误"))
+
+
+def api_user_register(name, email, pwd):
+    cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
+    if(len(cur.fetchall()) == 0):
+        cur.execute(
+            '''INSERT INTO `users` (`name`, `email`, `password`) VALUES (%s, %s, %s);''', (name, email, pwd))
+        con.commit()
+        cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
+        cur.fetchall()
+        return(jsonResponse("success", ""))
     else:
-        return ("账号错误")
+        return(jsonResponse("error", "用户已存在"))
 
-def get_user_info(email):
-    email=email.lower()
-    r=json.loads(json.dumps(file_users_json[email]))
-    r.pop("pwd")
-    return(r)
 
-def generate_key(email,time):
-    return(cs_encrypt.sha512(email+str(time)))
+def api_user_getlist():
+    return()
 
-def user_online(email):
-    ntime=time.time
-    key=generate_key(email,ntime)
-    
 
-def api_user_login(email,pwd):
-    r=verify_user(email,pwd)
-    if(r == True):
-        return(get_user_info(email))
-    else:
-        return(r)
-
-def api_user_register(name,email,pwd):
-    if (email in file_users_json):
-        return ("用户已存在")
-    else:
-        add_user(name,email,pwd)
-        return (get_user_info(email))
-
-def add_user(name,email,pwd):
-    file_users_json[email.lower()]={"name":name,"email":email,"pwd":pwd}
-    file_users_update()
+# cur.close()
+# con.close()
