@@ -12,27 +12,17 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
     if (input_name == "") {
         $("#cs-login-name").addClass("mdui-textfield-invalid");
     } else {
-    if (input_email == "") {
-        $("#cs-login-email").addClass("mdui-textfield-invalid");
-    } else {
-    if (input_pwd == "") {
-        $("#cs-login-password").addClass("mdui-textfield-invalid");
-    } else {
-    $.ajax({
-        method: 'GET',
-        url: '/api/register',
-        async: false,
-        headers: {
-            cs_name: input_name,
-            cs_email: input_email,
-            cs_password: sha512(input_pwd)
-        },
-        success: function (data) {
-            console.log(data);
-            $("#result").html(data);
+        if (input_email == "") {
+            $("#cs-login-email").addClass("mdui-textfield-invalid");
+        } else {
+            if (input_pwd == "") {
+                $("#cs-login-password").addClass("mdui-textfield-invalid");
+            } else {
+                cs_register(input_name,input_email,input_pwd)
+               
+            }
         }
-    });
-    }}}
+    }
     $("#cs-login-btn")[0].disabled = false;
     $("#cs-login-btn").html(`登录`);
 });

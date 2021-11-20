@@ -15,14 +15,6 @@ def index():
     return(render_template('index.html', config=config, title="首页"))
 
 
-@app.route('/install')
-def install():
-    if(os.path.exists("./cs-config.json") == False):
-        return (render_template('install/index.html'))
-    else:
-        return(render_template('install/success.html'))
-
-
 @app.route('/login')
 def login():
     return (render_template('login/index.html', config=config, title="登录"))
@@ -76,6 +68,12 @@ def api_register():
     email = request.headers.get('cs_email')
     pwd = request.headers.get('cs_password')
     return cs_user.api_user_register(name, email, pwd)
+
+
+@app.route('/api/checklogin')
+def api_checklogin():
+    token = request.cookies.get("cs_token")
+    return cs_user.api_user_checkLogin(token)
 
 
 @app.route('/api/admin/getuser')

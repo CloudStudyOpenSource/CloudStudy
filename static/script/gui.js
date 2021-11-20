@@ -1,6 +1,6 @@
 var $ = mdui.$;
 
-
+//注入html
 $("#cs-toolbar").html(
     `
 <div class="mdui-toolbar mdui-color-theme">
@@ -54,6 +54,8 @@ mdui.mutation()
 var inst = new mdui.Drawer('#cs-drawer');
 //$('title').text("CloudStudy | " + $("#cs-title").text())
 
+
+//深色模式
 if (localStorage.getItem("cs-darkmode") == null) {
     localStorage.setItem("cs-darkmode", "false");
 }
@@ -76,7 +78,6 @@ function cs_darkmode() {
     }
 }
 
-
 cs_darkmode();
 
 document.getElementById('cs-drawer-btn').addEventListener('click', function () {
@@ -87,10 +88,13 @@ document.getElementById('cs-drawer-darkmode').addEventListener('click', function
     cs_darkmode();
 });
 
-
+//ajax错误提示
 $(document).ajaxError(function (event, xhr, options) {
-    message="请求出错: "+xhr.status+" "+xhr.statusText;
-    mdui.snackbar({message:message, position: "right-top"})
-  // xhr: XMLHttpRequest 对象
-  // options: AJAX 请求的配置参数
+    message = "请求出错: " + xhr.status + " " + xhr.statusText;
+    mdui.snackbar({
+        message: message,
+        position: "right-top"
+    })
+    // xhr: XMLHttpRequest 对象
+    // options: AJAX 请求的配置参数
 });

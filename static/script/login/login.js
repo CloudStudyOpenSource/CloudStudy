@@ -10,27 +10,12 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
     if (input_email == "") {
         $("#cs-login-email").addClass("mdui-textfield-invalid");
     } else {
-    if (input_pwd == "") {
-        $("#cs-login-password").addClass("mdui-textfield-invalid");
-    } else {
-    $.ajax({
-        method: 'GET',
-        url: '/api/login',
-        async: false,
-        headers: {
-            cs_email: input_email,
-            cs_password: sha512(input_pwd)
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if (data.message == "success") {
-                console.log(data.data)
-            } else {
-                $("#result").html(data.data);
-            }
+        if (input_pwd == "") {
+            $("#cs-login-password").addClass("mdui-textfield-invalid");
+        } else {
+            cs_login(input_email,input_pwd)
         }
-    });
-    }}
+    }
     $("#cs-login-btn")[0].disabled = false;
     $("#cs-login-btn").html(`登录`);
 });

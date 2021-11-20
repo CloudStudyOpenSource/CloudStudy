@@ -24,6 +24,12 @@ con.commit()
 def jsonResponse(message, data):
     return(jsonify({"message": message, "data": data}))
 
+def generateToken(uid):
+    ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    token = cs_encrypt.sha512((json.dumps(
+        {"uid": uid, "time": ntime})))
+    return(ntime,token)
+
 
 def api_user_login(email, pwd):
     cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
@@ -32,10 +38,8 @@ def api_user_login(email, pwd):
         return(jsonResponse("error", "用户不存在"))
     else:
         if(pwd == fetch[0][3]):
-            ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            # print(ntime)
-            token = cs_encrypt.sha512((json.dumps(
-                {"uid": fetch[0][0], "time": ntime})))
+            ntime,token=generateToken(fetch[0][0])
+            print(ntime,token)
             cur.execute(
                 '''UPDATE `users` SET `login_token` = %s WHERE `users`.`uid` = %s; ''', (token, fetch[0][0]))
             cur.execute(
@@ -58,6 +62,15 @@ def api_user_register(name, email, pwd):
     else:
         return(jsonResponse("error", "用户已存在"))
 
+def api_user_checkLogin(token):
+    cur.execute('''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
+    fetch=cur.fetchall()
+    if(len(fetch) == 0):
+        return(jsonResponse("error", "登录失效"))
+    else:
+        ntime, token = generateToken(fetch[0][0])
+        print(fetch,ntime,token)
+        return(jsonResponse("success", token))
 
 def api_user_getlist():
     return()
