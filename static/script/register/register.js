@@ -20,7 +20,7 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
     } else {
     $.ajax({
         method: 'GET',
-        url: 'http://timfang.xyz:11451/api/register',
+        url: '/api/register',
         async: false,
         headers: {
             cs_name: input_name,

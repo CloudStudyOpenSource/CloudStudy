@@ -18,6 +18,7 @@
         <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
     </div>
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        <div id="page_dashbroad">
             <div class="mdui-row">
                 <div class="mdui-col-xs-12 mdui-col-lg-10">
                     <div class="mdui-card mdui-card-content">
@@ -55,7 +56,42 @@
                         </ul>
                     </div>
                 </div>
-            </div>  
+            </div>
+
+
+
+        </div>
+        <div id="page_config">
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">SiteName</label>
+                <input class="mdui-textfield-input" />
+            </div>
+        </div>
+        <div id="page_group">
+
+        </div>
+        <div id="page_user">
+            <div class="mdui-table-fluid">
+                <table class="mdui-table mdui-table-selectable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>昵称</th>
+                            <th>Email</th>
+                            <th>用户组</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cs-admin-user-table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="page_exam">
+        </div>
+        <div id="page_file">
+        </div>
     </div>
 </div>
 <script src="//cdn.jsdelivr.net/npm/vega@5.20.2"></script>

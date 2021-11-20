@@ -15,15 +15,19 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
     } else {
     $.ajax({
         method: 'GET',
-        url: 'http://timfang.xyz:11451/api/login',
+        url: '/api/login',
         async: false,
         headers: {
             cs_email: input_email,
             cs_password: sha512(input_pwd)
         },
         success: function (data) {
-            console.log(data);
-            $("#result").html(data)
+            data = JSON.parse(data);
+            if (data.message == "success") {
+                console.log(data.data)
+            } else {
+                $("#result").html(data.data);
+            }
         }
     });
     }}

@@ -1,0 +1,45 @@
+{% extends "head.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="mdui-container-fluid">
+    <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
+        <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
+        <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
+        <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
+        <a href="/admin/user" class="mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
+        <a href="/admin/exam" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
+        <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
+    </div>
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+            <div class="mdui-table-fluid">
+                <table class="mdui-table mdui-table-selectable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>昵称</th>
+                            <th>Email</th>
+                            <th>用户组</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cs-admin-user-table">
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+<script src="//cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+<script src="//cdn.jsdelivr.net/npm/vega-lite@5.1.1"></script>
+<script src="//cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
+<script src="{{url_for('static', filename='script/index.js')}}"></script>
+<script src="{{url_for('static', filename='script/account.js')}}"></script>
+<script src="{{url_for('static', filename='script/admin/admin.js')}}"></script>
+{% endblock %}
