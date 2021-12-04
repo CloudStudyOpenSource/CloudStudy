@@ -13,6 +13,7 @@ cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
    `uid` INT UNSIGNED AUTO_INCREMENT,
    `name` CHAR(20),
    `email` CHAR(250),
+   `avatar` JSON,
    `password` CHAR(128),
    `group` INT UNSIGNED,
    `login_time` DATETIME,
