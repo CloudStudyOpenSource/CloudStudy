@@ -1,0 +1,18 @@
+{% extends "head.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/login/login.css')}}" />
+<script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="mdui-container-fluid">
+
+</div>
+
+<script src="{{url_for('static', filename='script/hash.js')}}"></script>
+<script src="{{url_for('static', filename='script/index.js')}}"></script>
+<script src="{{url_for('static', filename='script/account.js')}}"></script>
+<script>var $ = mdui.$; cs_checkLogin()</script>
+{% endblock %}

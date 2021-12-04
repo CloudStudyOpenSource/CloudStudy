@@ -5,6 +5,7 @@ from flask import jsonify
 import mysql.connector
 import cs_config
 
+# 连接数据库
 con = mysql.connector.connect(**cs_config.mysql)
 cur = con.cursor()
 
@@ -18,28 +19,83 @@ cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
    `login_token` CHAR(128),
    PRIMARY KEY (`uid`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
+cur.execute('''CREATE TABLE IF NOT EXISTS `groups`(
+   `id` INT UNSIGNED AUTO_INCREMENT,
+   `name` CHAR(20),
+   `isAdmin` BOOLEAN,
+   PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
+cur.execute('''CREATE TABLE IF NOT EXISTS `exams`(
+    `id` INT UNSIGNED AUTO_INCREMENT , 
+    `name` CHAR(250) , 
+    `description` TEXT , 
+    `permissions` JSON , 
+    `startTime` DATETIME , 
+    `endTime` DATETIME , 
+    `questions` JSON ,
+   PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
+cur.execute('''CREATE TABLE IF NOT EXISTS `settings`(
+   `key` CHAR(50),
+   `value` TEXT,
+   PRIMARY KEY (`key`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
 con.commit()
 
 
+def mysqlExecute(args):
+    return()
+
+
 def jsonResponse(message, data):
+    # 返回json响应
     return(jsonify({"message": message, "data": data}))
 
+
 def generateToken(uid):
+    # 生成随机token
     ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     token = cs_encrypt.sha512((json.dumps(
         {"uid": uid, "time": ntime})))
-    return(ntime,token)
+    return(ntime, token)
+
+
+def checkTokenAvailable(token):
+    if(token != None):
+        cur.execute(
+            '''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
+        fetch = cur.fetchall()
+        if(len(fetch) == 0):
+            return("error", "登录失效")
+        else:
+            return("success", token)
+    else:
+        return("error", "登录失效")
+
+
+def getUserData(token):
+    if(token != None):
+        cur.execute(
+            '''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
+        fetch = cur.fetchall()
+        if(len(fetch) == 0):
+            return("error", "登录失效")
+        else:
+            return("success", fetch)
+    else:
+        return("error", "登录失效")
 
 
 def api_user_login(email, pwd):
+    # 前端用户登录
     cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
     fetch = cur.fetchall()
     if(len(fetch) == 0):
         return(jsonResponse("error", "用户不存在"))
     else:
         if(pwd == fetch[0][3]):
-            ntime,token=generateToken(fetch[0][0])
-            print(ntime,token)
+            ntime, token = generateToken(fetch[0][0])
+            print(ntime, token)
             cur.execute(
                 '''UPDATE `users` SET `login_token` = %s WHERE `users`.`uid` = %s; ''', (token, fetch[0][0]))
             cur.execute(
@@ -51,6 +107,7 @@ def api_user_login(email, pwd):
 
 
 def api_user_register(name, email, pwd):
+    # 前端用户注册
     cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
     if(len(cur.fetchall()) == 0):
         cur.execute(
@@ -62,15 +119,15 @@ def api_user_register(name, email, pwd):
     else:
         return(jsonResponse("error", "用户已存在"))
 
+
 def api_user_checkLogin(token):
-    cur.execute('''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
-    fetch=cur.fetchall()
-    if(len(fetch) == 0):
-        return(jsonResponse("error", "登录失效"))
-    else:
-        ntime, token = generateToken(fetch[0][0])
-        print(fetch,ntime,token)
-        return(jsonResponse("success", token))
+    # 前端检查token有效
+    return(jsonResponse(*checkTokenAvailable(token)))
+
+
+def api_get_user_data(token):
+    return(jsonResponse(*getUserData(token)))
+
 
 def api_user_getlist():
     return()

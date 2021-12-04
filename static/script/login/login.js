@@ -1,4 +1,5 @@
 var $ = mdui.$;
+cs_checkLogin()
 document.getElementById('cs-login-btn').addEventListener('click', function () {
     $("#cs-login-btn").html(`<div class="mdui-spinner mdui-center"></div>`);
     $("#cs-login-btn")[0].disabled = true;

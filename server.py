@@ -9,6 +9,8 @@ app = Flask(__name__)
 
 config = {"siteName": "CloudStudy"}
 
+# views
+
 
 @app.route('/')
 def index():
@@ -23,6 +25,17 @@ def login():
 @app.route('/register')
 def register():
     return (render_template('register/index.html', config=config, title="注册"))
+
+
+@app.route('/dashbroad')
+def dashbroad():
+    token = request.cookies.get("cs_token")
+    user = cs_user.getUserData(token)
+    if(user[0] == "success"):
+        user = user[1][0]
+    else:
+        user = None
+    return (render_template('dashbroad/index.html', config=config, title="面板", user=user))
 
 
 @app.route('/admin')
@@ -48,6 +61,8 @@ def admin_exam():
 @app.route('/admin/exam/new')
 def admin_exam_new():
     return (render_template('admin/exam/new/index.html'))
+
+# api
 
 
 @app.route('/api')
@@ -76,6 +91,12 @@ def api_checklogin():
     return cs_user.api_user_checkLogin(token)
 
 
+@app.route('/api/getUser')
+def api_getUser():
+    token = request.cookies.get("cs_token")
+    return cs_user.api_get_user_data(token)
+
+
 @app.route('/api/admin/getuser')
 def api_admin_getuser():
     return cs_user.api_user_getlist()
@@ -86,8 +107,15 @@ def apply_caching(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Method"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "*"
-    if(response.is_json == True):
-        response.data = response.data.decode("unicode-escape")
+    response.headers["Server"] = "You Guess?"
+    temp_resp = response
+    try:
+        if(response.is_json == True):
+            response.data = response.data.decode("unicode-escape")
+            response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    except:
+        response = temp_resp
+        print("JSON format error")
     return response
 
 
