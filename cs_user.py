@@ -6,8 +6,14 @@ import mysql.connector
 import cs_config
 
 # 连接数据库
-con = mysql.connector.connect(**cs_config.mysql)
-cur = con.cursor()
+def connectMysql():
+	global con
+	global cur
+	con = mysql.connector.connect(**cs_config.mysql)
+	cur = con.cursor()
+	print("Connected to Mysql Server")
+
+connectMysql()
 
 cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
    `uid` INT UNSIGNED AUTO_INCREMENT,
@@ -44,8 +50,15 @@ cur.execute('''CREATE TABLE IF NOT EXISTS `settings`(
 con.commit()
 
 
-def mysqlExecute(args):
-    return()
+def mysqlExecute(*args):
+	try:
+		cur.execute(*args)
+	except:
+		print("Err: Lost connection to Mysql Server. Reconnecting...")
+		cur.close()
+		con.close()
+		connectMysql()
+		cur.execute(*args)
 
 
 def jsonResponse(message, data):
@@ -63,7 +76,7 @@ def generateToken(uid):
 
 def checkTokenAvailable(token):
     if(token != None):
-        cur.execute(
+        mysqlExecute(
             '''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
         fetch = cur.fetchall()
         if(len(fetch) == 0):
@@ -89,7 +102,7 @@ def getUserData(token):
 
 def api_user_login(email, pwd):
     # 前端用户登录
-    cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
+    mysqlExecute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
     fetch = cur.fetchall()
     if(len(fetch) == 0):
         return(jsonResponse("error", "用户不存在"))
