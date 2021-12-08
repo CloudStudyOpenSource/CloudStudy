@@ -1,31 +1,31 @@
 var $ = mdui.$;
 //$("#cs-admin-user-table")
-$.ajax({
-    method: 'GET',
-    url: '/api/admin/getuser',
-    async: true,
-    headers: {},
-    success: function (data) {
-        data = JSON.parse(data)
-        //console.log(data);
-        id = 1
-        table_html = "";
-        for (each in data) {
-            //console.log(data[each])
-            table_html += "<tr>"
-            table_html += "<td>" + id + "</td>" //id
-            table_html += "<td>" + data[each].name + "</td>" //name
-            table_html += "<td>" + data[each].email + "</td>" //email
-            table_html += "<td>" + id + "</td>" //group
-            table_html += "<td>" + id + "</td>" //status
-            table_html += "<td>" + id + "</td>" //actions
-            table_html += "</tr>"
-            id += 1;
-        }
-        $("#cs-admin-user-table").html(table_html)
-        mdui.updateTables()
-    }
-});
+//$.ajax({
+//    method: 'GET',
+//    url: '/api/admin/getuser',
+//    async: true,
+//    headers: {},
+//    success: function (data) {
+//        data = JSON.parse(data)
+//        //console.log(data);
+//        id = 1
+//        table_html = "";
+//        for (each in data) {
+//            //console.log(data[each])
+//            table_html += "<tr>"
+//            table_html += "<td>" + id + "</td>" //id
+//            table_html += "<td>" + data[each].name + "</td>" //name
+//            table_html += "<td>" + data[each].email + "</td>" //email
+//            table_html += "<td>" + id + "</td>" //group
+//            table_html += "<td>" + id + "</td>" //status
+//            table_html += "<td>" + id + "</td>" //actions
+//            table_html += "</tr>"
+//            id += 1;
+//        }
+//        $("#cs-admin-user-table").html(table_html)
+//        mdui.updateTables()
+//    }
+//});
 
 
 var vlSpec = {

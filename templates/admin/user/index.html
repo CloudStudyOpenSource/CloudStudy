@@ -1,4 +1,4 @@
-{% extends "head.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -8,56 +8,42 @@
     }
 </style>
 
-<div class="mdui-container-fluid">
+<div class="mdui-container mdui-container-fluid">
     <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
         <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
         <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
         <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
-        <a href="/admin/user" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
+        <a href="/admin/user" class="mdui-tab-active mdui-ripple"><i
+                class="mdui-icon material-icons">account_circle</i>用户</a>
         <a href="/admin/exam" class="mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
         <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
     </div>
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
-            
-            adminuser
-        <div class="mdui-row">
-                <div class="mdui-col-xs-12 mdui-col-lg-10">
-                    <div class="mdui-card mdui-card-content">
-                        <div class="mdui-card-primary-title">趋势</div>
-                        <div id="vis" style="width: 100%;">
-                            <p style="text-align: center;padding:10%">Error: 您的浏览器无法渲染此图表</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mdui-col-xs-12 mdui-col-lg-2">
-                    <div class="mdui-card mdui-card-content">
-                        <div class="mdui-card-primary-title">统计</div>
-                        <ul class="mdui-list">
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">account_circle</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">114</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">用户数</div>
-                                </div>
-                            </li>
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">book</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">514</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">考试数</div>
-                                </div>
-                            </li>
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">insert_drive_file</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">191</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">文件数</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>  
+        <div class="mdui-table-fluid">
+            <table class="mdui-table mdui-table-selectable">
+                <thead>
+                    <tr>
+                        <th>UID</th>
+                        <th>昵称</th>
+                        <th>邮箱</th>
+                        <th>用户组</th>
+                        <th>最近登录</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for each in userList %}
+                    <tr>
+                        <td>{{ each[0] }}</td>
+                        <td>{{ each[1] }}</td>
+                        <td>{{ each[2] }}</td>
+                        <td>{{ each[4] }}</td>
+                        <td>{{ each[5] }}</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <script src="//cdn.jsdelivr.net/npm/vega@5.20.2"></script>

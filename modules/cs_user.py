@@ -4,64 +4,66 @@ import time
 import mysql.connector
 from flask import jsonify
 
-from modules import cs_config, cs_encrypt
+from modules import cs_config, cs_encrypt, cs_sql
 
 
 # 连接数据库
-def connectMysql():
-    global con
-    global cur
-    con = mysql.connector.connect(**cs_config.mysql)
-    cur = con.cursor()
-    print("Connected to Mysql Server")
 
+cs_sql.connectMysql()
 
-connectMysql()
-
-cur.execute('''CREATE TABLE IF NOT EXISTS `users`(
-   `uid` INT UNSIGNED AUTO_INCREMENT,
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `users`(
+   `userId` INT UNSIGNED AUTO_INCREMENT,
    `name` CHAR(20),
    `email` CHAR(250),
    `avatar` JSON,
    `password` CHAR(128),
-   `group` INT UNSIGNED,
-   `login_time` DATETIME,
-   `login_token` CHAR(128),
-   PRIMARY KEY (`uid`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
-cur.execute('''CREATE TABLE IF NOT EXISTS `groups`(
-   `id` INT UNSIGNED AUTO_INCREMENT,
+   `group` INT DEFAULT '1',
+   `loginTime` DATETIME,
+   `loginToken` CHAR(128),
+   `createTime` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `settings` JSON,
+   PRIMARY KEY (`userId`)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `groups`(
+   `groupId` INT UNSIGNED AUTO_INCREMENT,
    `name` CHAR(20),
    `isAdmin` BOOLEAN,
-   PRIMARY KEY (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
-cur.execute('''CREATE TABLE IF NOT EXISTS `exams`(
-    `id` INT UNSIGNED AUTO_INCREMENT , 
+   `permissions` JSON,
+   PRIMARY KEY (`groupId`)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `exams`(
+    `examId` INT UNSIGNED AUTO_INCREMENT , 
     `name` CHAR(250) , 
     `description` TEXT , 
     `permissions` JSON , 
     `startTime` DATETIME , 
     `endTime` DATETIME , 
     `questions` JSON ,
-   PRIMARY KEY (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
-cur.execute('''CREATE TABLE IF NOT EXISTS `settings`(
+   PRIMARY KEY (`examId`)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `questions`(
+    `questionId` INT UNSIGNED AUTO_INCREMENT , 
+    `examId` INT , 
+    `type` TEXT , 
+    `question` TEXT , 
+    `answer` TEXT , 
+    `score` FLOAT , 
+   PRIMARY KEY (`questionId`)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `answers`(
+    `answerId` INT UNSIGNED AUTO_INCREMENT , 
+    `questionId` INT , 
+    `userId` INT , 
+    `answer` TEXT , 
+    `score` FLOAT , 
+   PRIMARY KEY (`answerId`)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `settings`(
    `key` CHAR(50),
    `value` TEXT,
    PRIMARY KEY (`key`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;''')
-con.commit()
-
-
-def mysqlExecute(*args):
-    try:
-        cur.execute(*args)
-    except:
-        print("Err: Lost connection to Mysql Server. Reconnecting...")
-        cur.close()
-        con.close()
-        connectMysql()
-        cur.execute(*args)
+)DEFAULT CHARSET=utf8;''')
+cs_sql.con.commit()
 
 
 def jsonResponse(message, data):
@@ -79,9 +81,10 @@ def generateToken(uid):
 
 def checkTokenAvailable(token):
     if(token != None):
-        mysqlExecute(
-            '''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
-        fetch = cur.fetchall()
+        cs_sql.mysqlExecute(
+            '''SELECT userId FROM `users` WHERE `loginToken` = %s''', (token,))
+        fetch = cs_sql.cur.fetchall()
+        # print(fetch,fetch["name"])
         if(len(fetch) == 0):
             return("error", "登录失效")
         else:
@@ -92,9 +95,9 @@ def checkTokenAvailable(token):
 
 def getUserData(token):
     if(token != None):
-        cur.execute(
-            '''SELECT * FROM `users` WHERE `login_token` = %s''', (token,))
-        fetch = cur.fetchall()
+        cs_sql.mysqlExecute(
+            '''SELECT * FROM `users` WHERE `loginToken` = %s''', (token,))
+        fetch = cs_sql.cur.fetchall()
         if(len(fetch) == 0):
             return("error", "登录失效")
         else:
@@ -105,19 +108,21 @@ def getUserData(token):
 
 def api_user_login(email, pwd):
     # 前端用户登录
-    mysqlExecute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
-    fetch = cur.fetchall()
+    cs_sql.mysqlExecute(
+        '''SELECT userId,password FROM `users` WHERE `email` = %s''', (email,))
+    fetch = cs_sql.cur.fetchall()
+    # print(fetch)
     if(len(fetch) == 0):
         return(jsonResponse("error", "用户不存在"))
     else:
-        if(pwd == fetch[0][3]):
+        if(pwd == fetch[0][1]):
             ntime, token = generateToken(fetch[0][0])
             print(ntime, token)
-            cur.execute(
-                '''UPDATE `users` SET `login_token` = %s WHERE `users`.`uid` = %s; ''', (token, fetch[0][0]))
-            cur.execute(
-                '''UPDATE `users` SET `login_time` = %s WHERE `users`.`uid` = %s; ''', (ntime, fetch[0][0]))
-            con.commit()
+            cs_sql.mysqlExecute(
+                '''UPDATE `users` SET `loginToken` = %s WHERE `users`.`userId` = %s; ''', (token, fetch[0][0]))
+            cs_sql.mysqlExecute(
+                '''UPDATE `users` SET `loginTime` = %s WHERE `users`.`userId` = %s; ''', (ntime, fetch[0][0]))
+            cs_sql.con.commit()
             return(jsonResponse("success", token))
         else:
             return(jsonResponse("error", "密码错误"))
@@ -125,13 +130,14 @@ def api_user_login(email, pwd):
 
 def api_user_register(name, email, pwd):
     # 前端用户注册
-    cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
-    if(len(cur.fetchall()) == 0):
-        cur.execute(
-            '''INSERT INTO `users` (`name`, `email`, `password`) VALUES (%s, %s, %s);''', (name, email, pwd))
-        con.commit()
-        cur.execute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
-        cur.fetchall()
+    cs_sql.mysqlExecute(
+        '''SELECT userId FROM `users` WHERE `email` = %s''', (email,))
+    if(len(cs_sql.cur.fetchall()) == 0):
+        cs_sql.mysqlExecute(
+            '''INSERT INTO `users` (`name`, `email`, `avatar`, `password`, `settings`) VALUES (%s, %s, %s, %s);''', (name, email, "{}", pwd, "{}"))
+        cs_sql.con.commit()
+        # cs_sql.mysqlExecute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
+        # cs_sql.cur.fetchall()
         return(jsonResponse("success", ""))
     else:
         return(jsonResponse("error", "用户已存在"))
@@ -146,9 +152,15 @@ def api_get_user_data(token):
     return(jsonResponse(*getUserData(token)))
 
 
+def api_get_user_object(token):
+    user = getUserData(token)
+    if(user[0] == "success"):
+        user = user[1][0]
+    else:
+        user = None
+    return user
+
+
 def api_user_getlist():
-    return()
-
-
-# cur.close()
-# con.close()
+    cs_sql.mysqlExecute('''SELECT * FROM `users`''')
+    return(cs_sql.cur.fetchall())

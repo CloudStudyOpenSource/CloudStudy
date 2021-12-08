@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="zh-cmn-Hans">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, shrink-to-fit=no" />
@@ -26,9 +25,9 @@
         <div class="mdui-toolbar mdui-color-theme">
             <a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple" id="cs-drawer-btn"><i
                     class="mdui-icon material-icons">menu</i></a>
-            <a href="/" class="mdui-typo-headline">CloudStudy</a>
+            <a href="/dashbroad" class="mdui-typo-headline">CloudStudy</a>
             <div class="mdui-toolbar-spacer"></div>
-            <a href="javascript:;" class="mdui-ripple"
+            <a href="javascript:;" class=""
                 mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
                 <div class="mdui-card-header">
                     <img class="mdui-card-header-avatar" src="/static/favicon.png">
@@ -43,10 +42,10 @@
                 <li class="mdui-menu-item" disabled>
                     <a href="javascript:;">菜单</a>
                 </li>
-                <li class="mdui-menu-item">
-                    <a href="javascript:;" class="mdui-ripple">菜单</a>
-                </li>
                 <li class="mdui-divider"></li>
+                <li class="mdui-menu-item">
+                    <a href="/user/settings" class="mdui-ripple">设置</a>
+                </li>
                 <li class="mdui-menu-item">
                     <a href="javascript:;" onclick="cs_logout()" class="mdui-ripple">退出登录</a>
                 </li>
@@ -86,7 +85,7 @@
                     <div class="mdui-list-item-content">文件分享</div>
                 </li>
             </a>
-            <a href="/files">
+            <a href="/admin">
                 <li class="mdui-list-item mdui-ripple">
                     <i class="mdui-list-item-icon mdui-icon material-icons">settings</i>
                     <div class="mdui-list-item-content">管理后台</div>
@@ -136,15 +135,16 @@
     </div>
     <script src="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="{{url_for('static', filename='script/hash.js')}}"></script>
     <script src="{{url_for('static', filename='script/gui.js')}}"></script>
     <script src="{{url_for('static', filename='script/account.js')}}"></script>
     {% if requireLogin == False %}
     <script>
-        console.log("not reqi")
+        //console.log("not reqi")
     </script>
     {% else %}
     <script>
-        console.log("require login")
+        //console.log("require login")
         cs_checkLogin()
         setInterval(function () { cs_checkLogin() }, 10000);
     </script>

@@ -10,75 +10,143 @@ app = Flask(__name__)
 
 config = {"siteName": "CloudStudy"}
 
-# views
+
+# home
 
 
 @app.route('/')
 def index():
-    return(render_template('index.html', config=config, title="首页", requireLogin=False))
-
-
-@app.route('/login')
-def login():
-    return (render_template('login/index.html', config=config, title="登录", requireLogin=False))
-
-
-@app.route('/register')
-def register():
-    return (render_template('register/index.html', config=config, title="注册", requireLogin=False))
-
-
-@app.route('/dashbroad')
-def dashbroad():
-    token = request.cookies.get("cs_token")
-    user = cs_user.getUserData(token)
-    if(user[0] == "success"):
-        user = user[1][0]
+    if(cs_user.api_get_user_object(request.cookies.get("cs_token"))):
+        return(redirect("/dashbroad"))
     else:
-        user = None
-    return (render_template('dashbroad/index.html', config=config, title="面板", user=user))
+        return(render_template(
+            'index.html',
+            config=config,
+            title="首页",
+            requireLogin=False,
+            user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+        ))
 
 
-@app.route('/admin')
+# auth
+
+
+@ app.route('/login')
+def login():
+    return (render_template(
+        'login/index.html',
+        config=config,
+        title="登录",
+        requireLogin=False,
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+@ app.route('/register')
+def register():
+    return (render_template(
+        'register/index.html',
+        config=config,
+        title="注册",
+        requireLogin=False,
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+# dashbroad
+
+
+@ app.route('/dashbroad')
+def dashbroad():
+    return (render_template(
+        'dashbroad/index.html',
+        config=config,
+        title="面板",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+# user
+
+
+@ app.route('/user/settings')
+def user_settings():
+    return (render_template(
+        'user/settings/index.html',
+        config=config,
+        title="用户设置",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+# admin
+
+
+@ app.route('/admin')
 def admin():
-    return (render_template('admin/index.html', config=config, title="仪表盘"))
+    return (render_template(
+        'admin/index.html',
+        config=config,
+        title="仪表盘",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
 
 
-@app.route('/admin/config')
+@ app.route('/admin/config')
 def admin_config():
-    return (render_template('admin/config/index.html', config=config, title="仪表盘_参数设置"))
+    return (render_template(
+        'admin/config/index.html',
+        config=config,
+        title="仪表盘_参数设置",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
 
 
-@app.route('/admin/user')
+@ app.route('/admin/user')
 def admin_user():
-    return (render_template('admin/user/index.html', config=config, title="仪表盘_用户"))
+    return (render_template(
+        'admin/user/index.html',
+        config=config,
+        title="仪表盘_用户",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token")),
+        userList=cs_user.api_user_getlist()
+    ))
 
 
-@app.route('/admin/exam')
+@ app.route('/admin/exam')
 def admin_exam():
-    return (render_template('admin/exam/index.html', config=config, title="仪表盘_考试"))
+    return (render_template(
+        'admin/exam/index.html',
+        config=config,
+        title="仪表盘_考试",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
 
 
-@app.route('/admin/exam/new')
+@ app.route('/admin/exam/new')
 def admin_exam_new():
-    return (render_template('admin/exam/new/index.html'))
+    return (render_template(
+        'admin/exam/new/index.html',
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
 
 # api
 
 
-@app.route('/api')
+@ app.route('/api')
 def api():
     return redirect("/")
 
 
-@app.route('/api/login')
+@ app.route('/api/login')
 def api_login():
     email = request.headers.get('cs_email')
     pwd = request.headers.get('cs_password')
     return cs_user.api_user_login(email, pwd)
 
 
-@app.route('/api/register')
+@ app.route('/api/register')
 def api_register():
     name = request.headers.get('cs_name')
     email = request.headers.get('cs_email')
@@ -86,24 +154,24 @@ def api_register():
     return cs_user.api_user_register(name, email, pwd)
 
 
-@app.route('/api/checklogin')
+@ app.route('/api/checklogin')
 def api_checklogin():
     token = request.cookies.get("cs_token")
     return cs_user.api_user_checkLogin(token)
 
 
-@app.route('/api/getUser')
+@ app.route('/api/getUser')
 def api_getUser():
     token = request.cookies.get("cs_token")
     return cs_user.api_get_user_data(token)
 
 
-@app.route('/api/admin/getuser')
+@ app.route('/api/admin/getuser')
 def api_admin_getuser():
     return cs_user.api_user_getlist()
 
 
-@app.after_request
+@ app.after_request
 def apply_caching(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Method"] = "*"
