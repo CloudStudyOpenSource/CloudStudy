@@ -4,7 +4,6 @@ var $ = mdui.$;
 mdui.mutation()
 
 var inst = new mdui.Drawer('#cs-drawer');
-//$('title').text("CloudStudy | " + $("#cs-title").text())
 
 
 //深色模式

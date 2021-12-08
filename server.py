@@ -1,9 +1,10 @@
 # http://pac-api.timfang.xyz:11451/
-from flask import Flask, request, render_template
-from werkzeug.utils import redirect
-import cs_user
 import os
 
+from flask import Flask, render_template, request
+from werkzeug.utils import redirect
+
+from modules import cs_user
 
 app = Flask(__name__)
 
@@ -14,17 +15,17 @@ config = {"siteName": "CloudStudy"}
 
 @app.route('/')
 def index():
-    return(render_template('index.html', config=config, title="首页"))
+    return(render_template('index.html', config=config, title="首页", requireLogin=False))
 
 
 @app.route('/login')
 def login():
-    return (render_template('login/index.html', config=config, title="登录"))
+    return (render_template('login/index.html', config=config, title="登录", requireLogin=False))
 
 
 @app.route('/register')
 def register():
-    return (render_template('register/index.html', config=config, title="注册"))
+    return (render_template('register/index.html', config=config, title="注册", requireLogin=False))
 
 
 @app.route('/dashbroad')

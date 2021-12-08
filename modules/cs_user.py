@@ -1,17 +1,20 @@
 import json
-import cs_encrypt
 import time
-from flask import jsonify
+
 import mysql.connector
-import cs_config
+from flask import jsonify
+
+from modules import cs_config, cs_encrypt
+
 
 # 连接数据库
 def connectMysql():
-	global con
-	global cur
-	con = mysql.connector.connect(**cs_config.mysql)
-	cur = con.cursor()
-	print("Connected to Mysql Server")
+    global con
+    global cur
+    con = mysql.connector.connect(**cs_config.mysql)
+    cur = con.cursor()
+    print("Connected to Mysql Server")
+
 
 connectMysql()
 
@@ -51,14 +54,14 @@ con.commit()
 
 
 def mysqlExecute(*args):
-	try:
-		cur.execute(*args)
-	except:
-		print("Err: Lost connection to Mysql Server. Reconnecting...")
-		cur.close()
-		con.close()
-		connectMysql()
-		cur.execute(*args)
+    try:
+        cur.execute(*args)
+    except:
+        print("Err: Lost connection to Mysql Server. Reconnecting...")
+        cur.close()
+        con.close()
+        connectMysql()
+        cur.execute(*args)
 
 
 def jsonResponse(message, data):

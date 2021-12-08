@@ -136,8 +136,20 @@
     </div>
     <script src="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-    {% block content %}{% endblock %}
     <script src="{{url_for('static', filename='script/gui.js')}}"></script>
+    <script src="{{url_for('static', filename='script/account.js')}}"></script>
+    {% if requireLogin == False %}
+    <script>
+        console.log("not reqi")
+    </script>
+    {% else %}
+    <script>
+        console.log("require login")
+        cs_checkLogin()
+        setInterval(function () { cs_checkLogin() }, 10000);
+    </script>
+    {% endif %}
+    {% block content %}{% endblock %}
 </body>
 
 </html>

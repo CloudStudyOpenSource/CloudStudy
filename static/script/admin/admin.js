@@ -7,11 +7,11 @@ $.ajax({
     headers: {},
     success: function (data) {
         data = JSON.parse(data)
-        console.log(data);
+        //console.log(data);
         id = 1
         table_html = "";
         for (each in data) {
-            console.log(data[each])
+            //console.log(data[each])
             table_html += "<tr>"
             table_html += "<td>" + id + "</td>" //id
             table_html += "<td>" + data[each].name + "</td>" //name

@@ -1,5 +1,5 @@
 function cs_checkLogin() {
-    console.log("token", Cookies.get("cs_token"))
+    //console.log("token", Cookies.get("cs_token"))
     $.ajax({
         method: 'GET',
         url: '/api/checklogin',
@@ -7,7 +7,7 @@ function cs_checkLogin() {
         cache: false,
         success: function (data) {
             data = JSON.parse(data);
-            console.log("data", data)
+            //console.log("data", data)
             if (data.message == "success") {
                 Cookies.set("cs_token", data.data, {
                     expires: 0.5,
@@ -97,4 +97,3 @@ function cs_logout() {
     cs_checkLogin()
 }
 
-setInterval(function () { cs_checkLogin() }, 10000);

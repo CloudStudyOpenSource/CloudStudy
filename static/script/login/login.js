@@ -14,7 +14,7 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
         if (input_pwd == "") {
             $("#cs-login-password").addClass("mdui-textfield-invalid");
         } else {
-            cs_login(input_email,input_pwd)
+            cs_login(input_email, input_pwd)
         }
     }
     $("#cs-login-btn")[0].disabled = false;
