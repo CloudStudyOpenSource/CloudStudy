@@ -1,82 +1,9 @@
 import json
 import time
 
-import mysql.connector
 from flask import jsonify
 
-from modules import cs_config, cs_encrypt, cs_sql
-
-
-# 连接数据库
-
-cs_sql.connectMysql()
-
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `users`(
-   `userId` INT UNSIGNED AUTO_INCREMENT,
-   `name` CHAR(20),
-   `email` CHAR(250),
-   `avatar` JSON,
-   `password` CHAR(128),
-   `group` INT DEFAULT '1',
-   `loginTime` DATETIME,
-   `loginToken` CHAR(128),
-   `createTime` DATETIME DEFAULT CURRENT_TIMESTAMP,
-   `settings` JSON,
-   PRIMARY KEY (`userId`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `groups`(
-   `groupId` INT UNSIGNED AUTO_INCREMENT,
-   `name` CHAR(20),
-   `isAdmin` BOOLEAN,
-   `permissions` JSON,
-   PRIMARY KEY (`groupId`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `exams`(
-    `examId` INT UNSIGNED AUTO_INCREMENT , 
-    `name` CHAR(250) , 
-    `description` TEXT , 
-    `permissions` JSON , 
-    `startTime` DATETIME , 
-    `endTime` DATETIME , 
-    `questions` JSON ,
-   PRIMARY KEY (`examId`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `questions`(
-    `questionId` INT UNSIGNED AUTO_INCREMENT , 
-    `examId` INT , 
-    `type` TEXT , 
-    `question` TEXT , 
-    `answer` TEXT , 
-    `score` FLOAT , 
-   PRIMARY KEY (`questionId`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `answers`(
-    `answerId` INT UNSIGNED AUTO_INCREMENT , 
-    `questionId` INT , 
-    `userId` INT , 
-    `answer` TEXT , 
-    `score` FLOAT , 
-   PRIMARY KEY (`answerId`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.mysqlExecute('''CREATE TABLE IF NOT EXISTS `settings`(
-   `key` CHAR(50),
-   `value` TEXT,
-   PRIMARY KEY (`key`)
-)DEFAULT CHARSET=utf8;''')
-cs_sql.con.commit()
-
-
-def jsonResponse(message, data):
-    # 返回json响应
-    return(jsonify({"message": message, "data": data}))
-
-
-def generateToken(uid):
-    # 生成随机token
-    ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    token = cs_encrypt.sha512((json.dumps(
-        {"uid": uid, "time": ntime})))
-    return(ntime, token)
+from modules import cs_config, cs_encrypt, cs_sql, cs_tools
 
 
 def checkTokenAvailable(token):
@@ -96,7 +23,7 @@ def checkTokenAvailable(token):
 def getUserData(token):
     if(token != None):
         cs_sql.mysqlExecute(
-            '''SELECT * FROM `users` WHERE `loginToken` = %s''', (token,))
+            '''SELECT `userId`,`name`,`email`,`avatar`,`group`,`createTime`,`settings` FROM `users` WHERE `loginToken` = %s''', (token,))
         fetch = cs_sql.cur.fetchall()
         if(len(fetch) == 0):
             return("error", "登录失效")
@@ -106,6 +33,21 @@ def getUserData(token):
         return("error", "登录失效")
 
 
+def uploadUserData(token, data):
+    data = json.loads(data)
+    fetch = checkTokenAvailable(token)
+    if(fetch[0] == "success"):
+        if(data[2] != ""):
+            cs_sql.mysqlExecute(
+                '''UPDATE `users` SET `name` = %s,`email` = %s,`avatar` = %s,`settings` = %s WHERE `users`.`userId` = %s; ''', (data[1], data[2], data[3],  data[6], fetch[1][0]))
+            cs_sql.con.commit()
+            return("success", None)
+        else:
+            return("error", "邮箱不能为空")
+    else:
+        return(fetch)
+
+
 def api_user_login(email, pwd):
     # 前端用户登录
     cs_sql.mysqlExecute(
@@ -113,19 +55,19 @@ def api_user_login(email, pwd):
     fetch = cs_sql.cur.fetchall()
     # print(fetch)
     if(len(fetch) == 0):
-        return(jsonResponse("error", "用户不存在"))
+        return(cs_tools.jsonResponse("error", "用户不存在"))
     else:
         if(pwd == fetch[0][1]):
-            ntime, token = generateToken(fetch[0][0])
+            ntime, token = cs_tools.generateToken(fetch[0][0])
             print(ntime, token)
             cs_sql.mysqlExecute(
                 '''UPDATE `users` SET `loginToken` = %s WHERE `users`.`userId` = %s; ''', (token, fetch[0][0]))
             cs_sql.mysqlExecute(
                 '''UPDATE `users` SET `loginTime` = %s WHERE `users`.`userId` = %s; ''', (ntime, fetch[0][0]))
             cs_sql.con.commit()
-            return(jsonResponse("success", token))
+            return(cs_tools.jsonResponse("success", token))
         else:
-            return(jsonResponse("error", "密码错误"))
+            return(cs_tools.jsonResponse("error", "密码错误"))
 
 
 def api_user_register(name, email, pwd):
@@ -134,25 +76,30 @@ def api_user_register(name, email, pwd):
         '''SELECT userId FROM `users` WHERE `email` = %s''', (email,))
     if(len(cs_sql.cur.fetchall()) == 0):
         cs_sql.mysqlExecute(
-            '''INSERT INTO `users` (`name`, `email`, `avatar`, `password`, `settings`) VALUES (%s, %s, %s, %s);''', (name, email, "{}", pwd, "{}"))
+            '''INSERT INTO `users` (`name`, `email`, `avatar`, `password`, `settings`) VALUES (%s, %s, %s, %s, %s);''', (name, email, "{}", pwd, "{}"))
         cs_sql.con.commit()
         # cs_sql.mysqlExecute('''SELECT * FROM `users` WHERE `email` = %s''', (email,))
         # cs_sql.cur.fetchall()
-        return(jsonResponse("success", ""))
+        return(cs_tools.jsonResponse("success", ""))
     else:
-        return(jsonResponse("error", "用户已存在"))
+        return(cs_tools.jsonResponse("error", "用户已存在"))
 
 
 def api_user_checkLogin(token):
     # 前端检查token有效
-    return(jsonResponse(*checkTokenAvailable(token)))
+    return(cs_tools.jsonResponse(*checkTokenAvailable(token)))
 
 
 def api_get_user_data(token):
-    return(jsonResponse(*getUserData(token)))
+    return(cs_tools.jsonResponse(*getUserData(token)))
+
+
+def api_upload_user_data(token, data):
+    return(cs_tools.jsonResponse(*uploadUserData(token, data)))
 
 
 def api_get_user_object(token):
+    # jinja2渲染时使用接口，获取当前登录用户
     user = getUserData(token)
     if(user[0] == "success"):
         user = user[1][0]
@@ -162,5 +109,12 @@ def api_get_user_object(token):
 
 
 def api_user_getlist():
+    # jinja2渲染时使用接口，admin获取用户列表
     cs_sql.mysqlExecute('''SELECT * FROM `users`''')
+    return(cs_sql.cur.fetchall())
+
+
+def api_group_getlist():
+    # jinja2渲染时使用接口，admin获取分组列表
+    cs_sql.mysqlExecute('''SELECT * FROM `groups`''')
     return(cs_sql.cur.fetchall())

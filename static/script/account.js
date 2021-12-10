@@ -64,7 +64,7 @@ function cs_login(email, pwd) {
     });
 }
 
-function cs_register(name, email, pwd) {
+function cs_register(name, email, pwd,redirect=true) {
     $.ajax({
         method: 'GET',
         url: '/api/register',
@@ -78,13 +78,17 @@ function cs_register(name, email, pwd) {
         success: function (data) {
             data = JSON.parse(data);
             if (data.message == "success") {
-                mdui.alert('', '注册成功', function () {
-                    window.location.href = "/login"
-                }, {
-                    modal: true,
-                    closeOnEsc: false,
-                    history: false
-                });
+                if (redirect == true) {
+                    mdui.alert('', '注册成功', function () {
+                        window.location.href = "/login"
+                    }, {
+                        modal: true,
+                        closeOnEsc: false,
+                        history: false
+                    });
+                } else {
+                    return(true)
+                }
             } else {
                 $("#result").html(data.data);
             }

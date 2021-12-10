@@ -6,98 +6,45 @@
     .mdui-card {
         margin-bottom: 20px;
     }
+
+    .mdui-checkbox {
+        padding-left: 25px !important;
+    }
 </style>
 
 <div class="mdui-container mdui-container-fluid">
     <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
-        <a href="/admin" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
+        <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
         <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
         <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
         <a href="/admin/user" class="mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
-        <a href="/admin/exam" class="mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
+        <a href="/admin/exam" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
         <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
     </div>
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
-        <div id="page_dashbroad">
-            <div class="mdui-row">
-                <div class="mdui-col-xs-12 mdui-col-lg-10">
-                    <div class="mdui-card mdui-card-content">
-                        <div class="mdui-card-primary-title">趋势</div>
-                        <div id="vis" style="width: 100%;">
-                            <p style="text-align: center;padding:10%">Error: 您的浏览器无法渲染此图表</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mdui-col-xs-12 mdui-col-lg-2">
-                    <div class="mdui-card mdui-card-content">
-                        <div class="mdui-card-primary-title">统计</div>
-                        <ul class="mdui-list">
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">account_circle</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">114</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">用户数</div>
-                                </div>
-                            </li>
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">book</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">514</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">考试数</div>
-                                </div>
-                            </li>
-                            <li class="mdui-list-item mdui-ripple">
-                                <i class="mdui-list-item-icon mdui-icon material-icons">insert_drive_file</i>
-                                <div class="mdui-list-item-content">
-                                    <div class="mdui-list-item-title mdui-list-item-one-line">191</div>
-                                    <div class="mdui-list-item-text mdui-list-item-one-line">文件数</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        Add exam
+        <div class="mdui-textfield mdui-textfield-floating-label">
+            <label class="mdui-textfield-label">Name</label>
+            <input class="mdui-textfield-input" maxlength="20"></input>
+        </div>
+        <div class="mdui-textfield mdui-textfield-floating-label">
+            <label class="mdui-textfield-label">Description</label>
+            <textarea class="mdui-textfield-input" maxlength="250"></textarea>
+        </div>
+        <div id="chip"></div>
 
+        AddGroup:
+        {% for each in groupList %}
+        <label class="mdui-checkbox" style="padding-right:10px;">
+            <input type="checkbox" />
+            <i class="mdui-checkbox-icon"></i>
+            {{each[1]}}
+        </label>
+        {% endfor %}
+        <br><br>
+        <a href="/admin/exam/new"><button
+                class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Submit</button></a>
 
-
-        </div>
-        <div id="page_config">
-            <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label">SiteName</label>
-                <input class="mdui-textfield-input" />
-            </div>
-        </div>
-        <div id="page_group">
-
-        </div>
-        <div id="page_user">
-            <div class="mdui-table-fluid">
-                <table class="mdui-table mdui-table-selectable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>昵称</th>
-                            <th>Email</th>
-                            <th>用户组</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cs-admin-user-table">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div id="page_exam">
-        </div>
-        <div id="page_file">
-        </div>
     </div>
 </div>
-<script src="//cdn.jsdelivr.net/npm/vega@5.20.2"></script>
-<script src="//cdn.jsdelivr.net/npm/vega-lite@5.1.1"></script>
-<script src="//cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
-
-
-<script src="{{url_for('static', filename='script/admin/admin.js')}}"></script>
 {% endblock %}

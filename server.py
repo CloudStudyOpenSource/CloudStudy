@@ -1,14 +1,20 @@
 # http://pac-api.timfang.xyz:11451/
+# coding=utf-8
 import os
 
 from flask import Flask, render_template, request
+from flask.json import jsonify
 from werkzeug.utils import redirect
 
-from modules import cs_user
+from modules import cs_user, cs_sql, cs_exam
 
 app = Flask(__name__)
 
 config = {"siteName": "CloudStudy"}
+
+
+# 连接数据库
+cs_sql.connectMysql()
 
 
 # home
@@ -102,6 +108,17 @@ def admin_config():
     ))
 
 
+@ app.route('/admin/group')
+def admin_group():
+    return (render_template(
+        'admin/group/index.html',
+        config=config,
+        title="仪表盘_分组",
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token")),
+        userList=cs_user.api_user_getlist()
+    ))
+
+
 @ app.route('/admin/user')
 def admin_user():
     return (render_template(
@@ -113,13 +130,23 @@ def admin_user():
     ))
 
 
+@ app.route('/admin/user/table')
+def admin_user_table():
+    return (render_template(
+        'admin/user/table.html',
+        userList=cs_user.api_user_getlist()
+    ))
+
+
 @ app.route('/admin/exam')
 def admin_exam():
     return (render_template(
         'admin/exam/index.html',
         config=config,
         title="仪表盘_考试",
-        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token")),
+        groupList=cs_user.api_group_getlist(),
+        examList=cs_exam.api_exam_getlist()
     ))
 
 
@@ -127,6 +154,7 @@ def admin_exam():
 def admin_exam_new():
     return (render_template(
         'admin/exam/new/index.html',
+        groupList=cs_user.api_group_getlist(),
         user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
     ))
 
@@ -160,15 +188,17 @@ def api_checklogin():
     return cs_user.api_user_checkLogin(token)
 
 
-@ app.route('/api/getUser')
-def api_getUser():
+@ app.route('/api/user/settings/get')
+def api_user_settings_get():
     token = request.cookies.get("cs_token")
     return cs_user.api_get_user_data(token)
 
 
-@ app.route('/api/admin/getuser')
-def api_admin_getuser():
-    return cs_user.api_user_getlist()
+@ app.route('/api/user/settings/upload')
+def api_user_settings_upload():
+    token = request.cookies.get("cs_token")
+    data = request.args.get("data")
+    return cs_user.api_upload_user_data(token, data)
 
 
 @ app.after_request

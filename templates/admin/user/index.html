@@ -19,37 +19,96 @@
         <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
     </div>
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
-        <div class="mdui-table-fluid">
-            <table class="mdui-table mdui-table-selectable">
-                <thead>
-                    <tr>
-                        <th>UID</th>
-                        <th>昵称</th>
-                        <th>邮箱</th>
-                        <th>用户组</th>
-                        <th>最近登录</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for each in userList %}
-                    <tr>
-                        <td>{{ each[0] }}</td>
-                        <td>{{ each[1] }}</td>
-                        <td>{{ each[2] }}</td>
-                        <td>{{ each[4] }}</td>
-                        <td>{{ each[5] }}</td>
-                    </tr>
-                    {% endfor %}
-
-                </tbody>
-            </table>
+        <a href="javascript:;" onclick="inst.open()"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</a>
+        <a href="javascript:;" onclick="loadTable()"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
+        <div style="float:right">
+            Selected:
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Delete</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Edit</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Ban </a>
         </div>
+        <br><br>
+        <div id="table"></div>
+        <div class="mdui-dialog" id="dialog">
+            <div class="mdui-dialog-title">添加用户</div>
+            <div class="mdui-dialog-content">
+                <form action="/">
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-name">
+                        <label class="mdui-textfield-label">昵称</label><input class="mdui-textfield-input" name="name"
+                            type="text" required="" id="cs-login-name-input">
+                        <div class="mdui-textfield-error">昵称不能为空</div>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-email">
+                        <label class="mdui-textfield-label">邮箱</label><input class="mdui-textfield-input" name="email"
+                            type="text" required="" id="cs-login-email-input">
+                        <div class="mdui-textfield-error">邮箱不能为空</div>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-password">
+                        <label class="mdui-textfield-label">密码</label><input class="mdui-textfield-input"
+                            name="password" type="password" required="" id="cs-login-password-input">
+                        <div class="mdui-textfield-error">密码不能为空</div>
+                    </div>
+
+                </form>
+                <div id="result"></div>
+            </div>
+            <div class="mdui-dialog-actions">
+                <button class="mdui-btn mdui-ripple" onclick="inst.close()">取消</button>
+                <button class="mdui-btn mdui-ripple" onclick="addUser()">确定</button>
+            </div>
+        </div>
+        <script>
+            var $ = mdui.$;
+            var inst = new mdui.Dialog('#dialog');
+            function loadTable() {
+                $("#table").html(`<div class="mdui-spinner"></div>`);
+                mdui.mutation();
+                $.ajax({
+                    method: 'GET',
+                    url: '/admin/user/table',
+                    cache: false,
+                    success: function (data) {
+                        $("#table").html(data);
+                        mdui.mutation();
+                    }
+                });
+            }
+            loadTable();
+            function addUser() {
+                var input_name = $("#cs-login-name-input").val();
+                var input_email = $("#cs-login-email-input").val();
+                var input_pwd = $("#cs-login-password-input").val();
+                $("#cs-login-name").removeClass("mdui-textfield-invalid");
+                $("#cs-login-email").removeClass("mdui-textfield-invalid");
+                $("#cs-login-password").removeClass("mdui-textfield-invalid");
+                if (input_name == "") {
+                    $("#cs-login-name").addClass("mdui-textfield-invalid");
+                } else {
+                    if (input_email == "") {
+                        $("#cs-login-email").addClass("mdui-textfield-invalid");
+                    } else {
+                        if (input_pwd == "") {
+                            $("#cs-login-password").addClass("mdui-textfield-invalid");
+                        } else {
+                            cs_register(input_name, input_email, input_pwd, redirect = false)
+                            inst.close()
+                            loadTable()
+
+                        }
+                    }
+                }
+
+            }
+            function getTb() {
+                $('#table').find('.mdui-table-row-selected').each(function (index, element) {
+                    console.log(this.children[1].innerHTML)
+                })
+            }
+        </script>
     </div>
 </div>
-<script src="//cdn.jsdelivr.net/npm/vega@5.20.2"></script>
-<script src="//cdn.jsdelivr.net/npm/vega-lite@5.1.1"></script>
-<script src="//cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
 
 
-<script src="{{url_for('static', filename='script/admin/admin.js')}}"></script>
 {% endblock %}
