@@ -2,19 +2,21 @@
     <table class="mdui-table mdui-table-selectable">
         <thead>
             <tr>
-                <th>UID</th>
-                <th>昵称</th>
-                <th>邮箱</th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>简介</th>
                 <th>用户组</th>
-                <th>最近登录</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
             </tr>
         </thead>
         <tbody>
-            {% for each in userList %}
+            {% for each in examList %}
             <tr>
                 <td>{{ each[0] }}</td>
                 <td>{{ each[1] }}</td>
                 <td>{{ each[2] }}</td>
+                <td>{{ each[3] }}</td>
                 <td>{{ each[4] }}</td>
                 <td>{{ each[5] }}</td>
             </tr>

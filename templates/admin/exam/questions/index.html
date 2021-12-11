@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+
+    .mdui-checkbox,
+    .mdui-radio {
+        padding-left: 25px !important;
+    }
+</style>
+
+<div class="mdui-container mdui-container-fluid">
+    <!--
+    <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
+        <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
+        <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
+        <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
+        <a href="/admin/user" class="mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
+        <a href="/admin/exam" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
+        <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
+    </div>-->
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        Edit question
+        <br><br>
+        题号:
+        <button class="mdui-btn mdui-btn-icon mdui-ripple">
+            <i class="mdui-icon material-icons">keyboard_arrow_left</i>
+        </button>
+        <select class="mdui-select">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <button class="mdui-btn mdui-btn-icon mdui-ripple">
+            <i class="mdui-icon material-icons">keyboard_arrow_right</i>
+        </button>
+
+        <br>
+        <div class="mdui-tab mdui-tab-full-width" mdui-tab>
+            <a href="#tab1" class="mdui-tab-active mdui-ripple">编辑</a>
+            <a href="#tab2" class="mdui-ripple">预览</a>
+        </div>
+        <br>
+        <div id="tab1">
+            类型:
+            <label class="mdui-radio">
+                <input type="radio" name="group1" />
+                <i class="mdui-radio-icon"></i>
+                单项选择题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="group1" checked />
+                <i class="mdui-radio-icon"></i>
+                多项选择题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="group1" />
+                <i class="mdui-radio-icon"></i>
+                填空题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="group1" />
+                <i class="mdui-radio-icon"></i>
+                简答题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="group1" />
+                <i class="mdui-radio-icon"></i>
+                上传题
+            </label>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">标题</label>
+                <input class="mdui-textfield-input" maxlength="250" id="cs_exam_name"></input>
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">正文 (Markdown)</label>
+                <textarea class="mdui-textfield-input" id="cs_exam_desc"></textarea>
+            </div>
+            <br>
+            选项:
+            <br><br>
+            <div class="mdui-card mdui-card-content">
+                <div class="mdui-card-primary-title">A
+                    <button class="mdui-btn mdui-btn-icon mdui-ripple" style="float: right;">
+                        <i class="mdui-icon material-icons">delete</i>
+                    </button>
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">Markdown</label>
+                    <textarea class="mdui-textfield-input"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="mdui-card mdui-card-content">
+                <div class="mdui-card-primary-title">B
+                    <button class="mdui-btn mdui-btn-icon mdui-ripple" style="float: right;">
+                        <i class="mdui-icon material-icons">delete</i>
+                    </button>
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">Markdown</label>
+                    <textarea class="mdui-textfield-input"></textarea>
+                </div>
+            </div>
+            <br><br>
+        </div>
+        <div id="tab2">
+            <div class="mdui-chip">
+                <span class="mdui-chip-title">单项选择题</span>
+            </div>
+        </div>
+        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="submit()">Submit</button>
+
+        <script>
+            var $ = mdui.$;
+            mdui.mutation()
+            function submit() {
+                data = {}
+                data["name"] = $("#cs_exam_name")[0].value
+                data["description"] = $("#cs_exam_desc")[0].value
+                data["startTime"] = $("#cs_exam_st_date")[0].value + " " + $("#cs_exam_st_time")[0].value + ":00"
+                data["endTime"] = $("#cs_exam_et_date")[0].value + " " + $("#cs_exam_et_time")[0].value + ":00"
+                data["groups"] = []
+                $(".cs_exam_groups").each(function (index, element) {
+                    if (this.checked == true) {
+                        data.groups.push(this.dataset.id)
+                    }
+                })
+                console.log(JSON.stringify(data))
+                $.ajax({
+                    method: 'GET',
+                    url: '/api/admin/exam/new',
+                    async: false,
+                    cache: false,
+                    data: {
+                        data: JSON.stringify(data)
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        if (data.message == "success") {
+                            window.location.href = "/admin/exam"
+                        } else {
+                            mdui.snackbar({
+                                message: "Error: " + data.data,
+                                position: "right-top"
+                            })
+                        }
+                    }
+                });
+            }
+        </script>
+
+    </div>
+</div>
+{% endblock %}

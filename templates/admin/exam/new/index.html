@@ -7,7 +7,8 @@
         margin-bottom: 20px;
     }
 
-    .mdui-checkbox {
+    .mdui-checkbox,
+    .mdui-radio {
         padding-left: 25px !important;
     }
 </style>
@@ -25,25 +26,73 @@
         Add exam
         <div class="mdui-textfield mdui-textfield-floating-label">
             <label class="mdui-textfield-label">Name</label>
-            <input class="mdui-textfield-input" maxlength="20"></input>
+            <input class="mdui-textfield-input" maxlength="250" id="cs_exam_name"></input>
         </div>
         <div class="mdui-textfield mdui-textfield-floating-label">
             <label class="mdui-textfield-label">Description</label>
-            <textarea class="mdui-textfield-input" maxlength="250"></textarea>
+            <textarea class="mdui-textfield-input" id="cs_exam_desc"></textarea>
         </div>
-        <div id="chip"></div>
-
-        AddGroup:
+        <br>
+        StartTime:
+        <input id="cs_exam_st_date" type="date" class="mdui-color-transparent mdui-text-color-theme-text"
+            style="border: none;">
+        <input id="cs_exam_st_time" type="time" class="mdui-color-transparent mdui-text-color-theme-text"
+            style="border: none;" value="13:30">
+        <br><br>
+        EndTime:
+        <input id="cs_exam_et_date" type="date" class="mdui-color-transparent mdui-text-color-theme-text"
+            style="border: none;">
+        <input id="cs_exam_et_time" type="time" class="mdui-color-transparent mdui-text-color-theme-text"
+            style="border: none;" value="13:30">
+        <br><br>
+        Groups:
         {% for each in groupList %}
         <label class="mdui-checkbox" style="padding-right:10px;">
-            <input type="checkbox" />
+            <input type="checkbox" class="cs_exam_groups" data-id="{{each[0]}}" />
             <i class="mdui-checkbox-icon"></i>
             {{each[1]}}
         </label>
         {% endfor %}
         <br><br>
-        <a href="/admin/exam/new"><button
-                class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Submit</button></a>
+        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="submit()">Submit</button>
+
+        <script>
+            var $ = mdui.$;
+            function submit() {
+                data = {}
+                data["name"] = $("#cs_exam_name")[0].value
+                data["description"] = $("#cs_exam_desc")[0].value
+                data["startTime"] = $("#cs_exam_st_date")[0].value + " " + $("#cs_exam_st_time")[0].value + ":00"
+                data["endTime"] = $("#cs_exam_et_date")[0].value + " " + $("#cs_exam_et_time")[0].value + ":00"
+                data["groups"] = []
+                $(".cs_exam_groups").each(function (index, element) {
+                    if (this.checked == true) {
+                        data.groups.push(this.dataset.id)
+                    }
+                })
+                console.log(JSON.stringify(data))
+                $.ajax({
+                    method: 'GET',
+                    url: '/api/admin/exam/new',
+                    async: false,
+                    cache: false,
+                    data: {
+                        data: JSON.stringify(data)
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        if (data.message == "success") {
+                            window.location.href = "/admin/exam"
+                        } else {
+                            mdui.snackbar({
+                                message: "Error: " + data.data,
+                                position: "right-top"
+                            })
+                        }
+                    }
+                });
+            }
+        </script>
 
     </div>
 </div>

@@ -119,6 +119,14 @@ def admin_group():
     ))
 
 
+@ app.route('/admin/group/table')
+def admin_group_table():
+    return (render_template(
+        'admin/group/table.html',
+        groupList=cs_user.api_group_getlist()
+    ))
+
+
 @ app.route('/admin/user')
 def admin_user():
     return (render_template(
@@ -144,8 +152,14 @@ def admin_exam():
         'admin/exam/index.html',
         config=config,
         title="仪表盘_考试",
-        user=cs_user.api_get_user_object(request.cookies.get("cs_token")),
-        groupList=cs_user.api_group_getlist(),
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+@ app.route('/admin/exam/table')
+def admin_exam_table():
+    return (render_template(
+        'admin/exam/table.html',
         examList=cs_exam.api_exam_getlist()
     ))
 
@@ -155,6 +169,14 @@ def admin_exam_new():
     return (render_template(
         'admin/exam/new/index.html',
         groupList=cs_user.api_group_getlist(),
+        user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
+    ))
+
+
+@ app.route('/admin/exam/questions/edit')
+def admin_exam_questions_edit():
+    return (render_template(
+        'admin/exam/questions/index.html',
         user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
     ))
 
@@ -199,6 +221,13 @@ def api_user_settings_upload():
     token = request.cookies.get("cs_token")
     data = request.args.get("data")
     return cs_user.api_upload_user_data(token, data)
+
+
+@ app.route('/api/admin/exam/new')
+def api_admin_exam_new():
+    token = request.cookies.get("cs_token")
+    data = request.args.get("data")
+    return cs_exam.api_exam_new(data)
 
 
 @ app.after_request
