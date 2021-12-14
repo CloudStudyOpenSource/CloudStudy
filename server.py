@@ -14,7 +14,7 @@ config = {"siteName": "CloudStudy"}
 
 
 # 连接数据库
-cs_sql.connectMysql()
+#cs_sql.connectMysql()
 
 
 # home

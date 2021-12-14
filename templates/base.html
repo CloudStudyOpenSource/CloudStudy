@@ -30,9 +30,9 @@
             <a href="javascript:;" class=""
                 mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
                 <div class="mdui-card-header">
-                    <img class="mdui-card-header-avatar" src="/static/favicon.png">
-                    <div class="mdui-card-header-title">{{user[1]}}</div>
-                    <div class="mdui-card-header-subtitle">Subtitle</div>
+                    <img class="mdui-card-header-avatar" src="{{user.avatar}}">
+                    <div class="mdui-card-header-title">{{user.name}}</div>
+                    <div class="mdui-card-header-subtitle">{{user.group_name}}</div>
                 </div>
             </a>
             <ul class="mdui-menu " id="example-attr">

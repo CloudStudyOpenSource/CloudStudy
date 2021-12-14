@@ -19,7 +19,7 @@
         <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
     </div>
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
-        <a href="javascript:;" onclick="inst.open()"
+        <a href="javascript:;" onclick="addUserInst.open()"
             class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</a>
         <a href="javascript:;" onclick="loadTable()"
             class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
@@ -61,7 +61,7 @@
         </div>
         <script>
             var $ = mdui.$;
-            var inst = new mdui.Dialog('#dialog');
+            var addUserInst = new mdui.Dialog('#dialog');
             function loadTable() {
                 $("#table").html(`<div class="mdui-spinner"></div>`);
                 mdui.mutation();
@@ -93,7 +93,7 @@
                             $("#cs-login-password").addClass("mdui-textfield-invalid");
                         } else {
                             cs_register(input_name, input_email, input_pwd, redirect = false)
-                            inst.close()
+                            addUserInst.close()
                             loadTable()
 
                         }

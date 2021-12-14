@@ -17,6 +17,7 @@ class DateEncoder(json.JSONEncoder):
 def jsonResponse(message, data):
     # 返回json响应
     return(json.dumps({"message": message, "data": data}, cls=DateEncoder))
+    #return(json.dumps({"message": message, "data": data}))
 
 
 def generateToken(uid):

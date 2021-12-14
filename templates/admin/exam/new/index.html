@@ -48,9 +48,9 @@
         Groups:
         {% for each in groupList %}
         <label class="mdui-checkbox" style="padding-right:10px;">
-            <input type="checkbox" class="cs_exam_groups" data-id="{{each[0]}}" />
+            <input type="checkbox" class="cs_exam_groups" data-id="{{each.id}}" />
             <i class="mdui-checkbox-icon"></i>
-            {{each[1]}}
+            {{each.name}}
         </label>
         {% endfor %}
         <br><br>

@@ -13,12 +13,12 @@
         <tbody>
             {% for each in examList %}
             <tr>
-                <td>{{ each[0] }}</td>
-                <td>{{ each[1] }}</td>
-                <td>{{ each[2] }}</td>
-                <td>{{ each[3] }}</td>
-                <td>{{ each[4] }}</td>
-                <td>{{ each[5] }}</td>
+                <td>{{ each.id }}</td>
+                <td>{{ each.name }}</td>
+                <td>{{ each.description}}</td>
+                <td>{{ each.permissions}}</td>
+                <td>{{ each.startTime }}</td>
+                <td>{{ each.endTime}}</td>
             </tr>
             {% endfor %}
 
