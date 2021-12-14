@@ -9,14 +9,7 @@
 </style>
 
 <div class="mdui-container mdui-container-fluid">
-    <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
-        <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
-        <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
-        <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
-        <a href="/admin/user" class="mdui-ripple"><i class="mdui-icon material-icons">account_circle</i>用户</a>
-        <a href="/admin/exam" class="mdui-tab-active mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
-        <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
-    </div>
+    {% include 'admin/tab.html' %}
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
         <a href="/admin/exam/new"><button
                 class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</button></a>

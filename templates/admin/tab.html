@@ -1,0 +1,41 @@
+<div class="mdui-tab mdui-tab-scrollable" id="cs_admin_tab" mdui-tab>
+    <a class="mdui-ripple" onclick="window.location.href='/admin'"><i class="mdui-icon material-icons">home</i>面板首页</a>
+    <a class="mdui-ripple" onclick="window.location.href='/admin/config'"><i
+            class="mdui-icon material-icons">settings</i>参数设置</a>
+    <a class="mdui-ripple" onclick="window.location.href='/admin/group'"><i
+            class="mdui-icon material-icons">group</i>分组</a>
+    <a class="mdui-ripple" onclick="window.location.href='/admin/user'"><i
+            class="mdui-icon material-icons">account_circle</i>用户</a>
+    <a class="mdui-ripple" onclick="window.location.href='/admin/exam'"><i
+            class="mdui-icon material-icons">book</i>考试</a>
+    <a class="mdui-ripple" onclick="window.location.href='/admin/file'"><i
+            class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
+</div>
+<script>
+    var $ = mdui.$;
+    var cs_admin_tab = new mdui.Tab('#cs_admin_tab');
+    url = window.location.pathname
+    if (url == "/admin") {
+        cs_admin_tab.show(0);
+    } else {
+        if (url.includes("/admin/config")) {
+            cs_admin_tab.show(1);
+        } else {
+            if (url.includes("/admin/group")) {
+                cs_admin_tab.show(2);
+            } else {
+                if (url.includes("/admin/user")) {
+                    cs_admin_tab.show(3);
+                } else {
+                    if (url.includes("/admin/exam")) {
+                        cs_admin_tab.show(4);
+                    } else {
+                        if (url.includes("/admin/file")) {
+                            cs_admin_tab.show(5);
+                        } else { }
+                    }
+                }
+            }
+        }
+    }
+</script>

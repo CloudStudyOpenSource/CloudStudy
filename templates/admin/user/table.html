@@ -15,7 +15,7 @@
                 <td>{{ each.id }}</td>
                 <td>{{ each.name }}</td>
                 <td>{{ each.email }}</td>
-                <td>{{ each.group }}</td>
+                <td>{{ each.group_name() }}(#{{each.group}})</td>
                 <td>{{ each.loginTime }}</td>
             </tr>
             {% endfor %}

@@ -9,15 +9,7 @@
 </style>
 
 <div class="mdui-container mdui-container-fluid">
-    <div class="mdui-tab mdui-tab-scrollable" mdui-tab>
-        <a href="/admin" class="mdui-ripple"><i class="mdui-icon material-icons">home</i>面板首页</a>
-        <a href="/admin/config" class="mdui-ripple"><i class="mdui-icon material-icons">settings</i>参数设置</a>
-        <a href="/admin/group" class="mdui-ripple"><i class="mdui-icon material-icons">group</i>分组</a>
-        <a href="/admin/user" class="mdui-tab-active mdui-ripple"><i
-                class="mdui-icon material-icons">account_circle</i>用户</a>
-        <a href="/admin/exam" class="mdui-ripple"><i class="mdui-icon material-icons">book</i>考试</a>
-        <a href="/admin/file" class="mdui-ripple"><i class="mdui-icon material-icons">insert_drive_file</i>文件分享</a>
-    </div>
+    {% include 'admin/tab.html' %}
     <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
         <a href="javascript:;" onclick="addUserInst.open()"
             class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</a>
@@ -25,12 +17,15 @@
             class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
         <div style="float:right">
             Selected:
-            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Delete</a>
-            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Edit</a>
-            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense">Ban </a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense"
+                id="cs_table_del">Delete</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense"
+                id="cs_table_edit">Edit</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense" id="cs_table_ban">Ban
+            </a>
         </div>
         <br><br>
-        <div id="table"></div>
+        <div id="table" onclick="getTb()" onmousemove="getTb()"></div>
         <div class="mdui-dialog" id="dialog">
             <div class="mdui-dialog-title">添加用户</div>
             <div class="mdui-dialog-content">
@@ -55,7 +50,7 @@
                 <div id="result"></div>
             </div>
             <div class="mdui-dialog-actions">
-                <button class="mdui-btn mdui-ripple" onclick="inst.close()">取消</button>
+                <button class="mdui-btn mdui-ripple" onclick="addUserInst.close()">取消</button>
                 <button class="mdui-btn mdui-ripple" onclick="addUser()">确定</button>
             </div>
         </div>
@@ -74,6 +69,7 @@
                         mdui.mutation();
                     }
                 });
+                getTb()
             }
             loadTable();
             function addUser() {
@@ -101,10 +97,23 @@
                 }
 
             }
+            onselect = []
             function getTb() {
+                onselect = []
                 $('#table').find('.mdui-table-row-selected').each(function (index, element) {
-                    console.log(this.children[1].innerHTML)
+                    onselect.push(this.children[1].innerHTML)
                 })
+                if (onselect.length != 1) {
+                    $("#cs_table_edit").attr('disabled', "");
+                } else {
+                    $("#cs_table_edit").removeAttr('disabled');
+                }
+                if (onselect.length == 0) {
+                    $("#cs_table_del").attr('disabled', "");
+                } else {
+                    $("#cs_table_del").removeAttr('disabled');
+                }
+                //console.log(onselect)
             }
         </script>
     </div>

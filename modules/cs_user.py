@@ -9,9 +9,6 @@ from modules import cs_config, cs_encrypt, cs_sql, cs_tools
 from server import app
 
 
-fetch = cs_sql.session.query(cs_sql.User).filter(
-    cs_sql.User.email == "mc13735292967@163.com").first()
-# print(fetch.group)
 
 
 def checkTokenAvailable(token):

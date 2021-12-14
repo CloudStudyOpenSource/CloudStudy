@@ -1,27 +1,22 @@
+import datetime
+
+from sqlalchemy import (Column, DateTime, String, Text,
+                        create_engine)
+from sqlalchemy.dialects.mysql import INTEGER, LONGTEXT
 from sqlalchemy.dialects.mysql.json import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.dialects.mysql import INTEGER, TINYINT, LONGTEXT
-from sqlalchemy import Column, DateTime, ForeignKey, String, Text
-from sqlalchemy import create_engine
-import datetime
-
-import mysql.connector
 from sqlalchemy.sql.sqltypes import Boolean
-from server import app
+import mysql.connector
 
 from modules import cs_config
 
-
 engine = create_engine(
-    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True)  # echo=True
+    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True, echo=True)  # echo=True
 
 Base = declarative_base()
 metadata = Base.metadata
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 class User(Base):
@@ -90,6 +85,10 @@ class Exam(Base):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
 def commit():
     session.commit()
 
@@ -112,28 +111,6 @@ cs_sql.session.query(User).filter(user.name == 'name')
 cs_sql.session.query(User).filter(user.name == 'name')[0].name="newname"
 '''
 
-
-def connectMysql():
-    global con
-    global cur
-    con = mysql.connector.connect(**cs_config.mysql)
-    cur = con.cursor(buffered=True)
-    print("Connected to Mysql Server")
-
-
-def mysqlExecute(*args):
-    # print(*args)
-    try:
-        cur.execute(*args)
-    except:
-        print("Err: Lost connection to Mysql Server. Reconnecting...")
-        try:
-            cur.close()
-            con.close()
-        except:
-            pass
-        connectMysql()
-        cur.execute(*args)
 
 
 def initMysql():
