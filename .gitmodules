@@ -1,3 +1,6 @@
 [submodule "templates"]
 	path = templates
 	url = git@github.com:CloudStudyOpenSource/CloudStudy-Templates.git
+[submodule "static"]
+	path = static
+	url = git@github.com:CloudStudyOpenSource/CloudStudy-Static.git
