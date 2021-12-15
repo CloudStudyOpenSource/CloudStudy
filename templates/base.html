@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}" />
     {% block css %}{% endblock %}
-    <link rel="icon" type="image/png" href="{{url_for('static', filename='favicon.png')}}">
+    <link rel="icon" type="image/svg+xml" href="{{url_for('static', filename='favicon.svg')}}">
 
     {% if title %}
     <title>{{config.siteName}} | {{title}}</title>
@@ -30,7 +30,7 @@
             <a href="javascript:;" class=""
                 mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
                 <div class="mdui-card-header">
-                    <img class="mdui-card-header-avatar" src="{{user.avatar}}">
+                    <img class="mdui-card-header-avatar" src="{{user.avatar}}" alt="{{user.name}}">
                     <div class="mdui-card-header-title">{{user.name}}</div>
                     <div class="mdui-card-header-subtitle">{{user.group_name}}</div>
                 </div>

@@ -81,7 +81,6 @@ def api_user_register(name, email, pwd):
     if(fetch.count() == 0):
         cs_sql.add(cs_sql.User(name=name, email=email,
                    avatar="/static/favicon.png", password=pwd, group="1", createTime=datetime.now(), settings="{}"))
-        cs_sql.commit()
         return(cs_tools.jsonResponse("success", ""))
     else:
         return(cs_tools.jsonResponse("error", "用户已存在"))
