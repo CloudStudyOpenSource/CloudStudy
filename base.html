@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, shrink-to-fit=no" />
+    <meta name="renderer" content="webkit" />
+    <meta name="force-rendering" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="云学习 | 在线考试系统">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}" />
+    {% block css %}{% endblock %}
+    <link rel="icon" type="image/svg+xml" href="{{url_for('static', filename='favicon.svg')}}">
+
+    {% if title %}
+    <title>{{config.siteName}} | {{title}}</title>
+    {% else %}
+    <title>{{config.siteName}}</title>
+    {% endif %}
+</head>
+
+<body class="mdui-appbar-with-toolbar mdui-theme-accent-indigo mdui-theme-primary-deep-purple">
+    <div class="mdui-appbar mdui-appbar-fixed" id="cs-toolbar">
+        {% if user %}
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple" id="cs-drawer-btn"><i
+                    class="mdui-icon material-icons">menu</i></a>
+            <a href="/dashbroad" class="mdui-typo-headline">CloudStudy</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <a href="javascript:;" class=""
+                mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
+                <div class="mdui-card-header">
+                    <img class="mdui-card-header-avatar" src="{{user.avatar}}" alt="{{user.name}}">
+                    <div class="mdui-card-header-title">{{user.name}}</div>
+                    <div class="mdui-card-header-subtitle">{{user.group_name}}</div>
+                </div>
+            </a>
+            <ul class="mdui-menu " id="example-attr">
+                <li class="mdui-menu-item">
+                    <a href="javascript:;" class="mdui-ripple">菜单</a>
+                </li>
+                <li class="mdui-menu-item" disabled>
+                    <a href="javascript:;">菜单</a>
+                </li>
+                <li class="mdui-divider"></li>
+                <li class="mdui-menu-item">
+                    <a href="/user/settings" class="mdui-ripple">设置</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:;" onclick="cs_logout()" class="mdui-ripple">退出登录</a>
+                </li>
+            </ul>
+
+        </div>
+        {% else %}
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple" id="cs-drawer-btn"><i
+                    class="mdui-icon material-icons">menu</i></a>
+            <a href="/" class="mdui-typo-headline">CloudStudy</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <a href="/login"><button class="mdui-btn mdui-ripple mdui-hidden-xs">登录</button></a>
+            <a href="/register"><button class="mdui-btn mdui-ripple mdui-hidden-xs">注册</button></a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="mdui-drawer mdui-drawer-close" id="cs-drawer">
+        {% if user %}
+        <ul class="mdui-list">
+            <li class="mdui-subheader">导航</li>
+            <a href="/dashbroad">
+                <li class="mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+                    <div class="mdui-list-item-content">首页</div>
+                </li>
+            </a>
+            <a href="/exams">
+                <li class="mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">book</i>
+                    <div class="mdui-list-item-content">考试</div>
+                </li>
+            </a>
+            <a href="/files">
+                <li class="mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">insert_drive_file</i>
+                    <div class="mdui-list-item-content">文件分享</div>
+                </li>
+            </a>
+            <a href="/admin">
+                <li class="mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">settings</i>
+                    <div class="mdui-list-item-content">管理后台</div>
+                </li>
+            </a>
+            <li class="mdui-subheader">个性化</li>
+            <li class="mdui-list-item mdui-ripple">
+                <label class="mdui-switch">
+                    <input type="checkbox" id="cs-drawer-darkmode" />
+                    <i class="mdui-switch-icon"></i>
+                </label>
+                <div class="mdui-list-item-content">深色模式</div>
+            </li>
+        </ul>
+        {% else %}
+        <ul class="mdui-list">
+            <li class="mdui-subheader">导航</li>
+            <a href="/">
+                <li class="mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+                    <div class="mdui-list-item-content">首页</div>
+                </li>
+            </a>
+            <li class="mdui-subheader">个性化</li>
+            <li class="mdui-list-item mdui-ripple">
+                <label class="mdui-switch">
+                    <input type="checkbox" id="cs-drawer-darkmode" />
+                    <i class="mdui-switch-icon"></i>
+                </label>
+                <div class="mdui-list-item-content">深色模式</div>
+            </li>
+            <li class="mdui-subheader mdui-hidden-sm-up">账号</li>
+            <a href="/login">
+                <li class="mdui-list-item mdui-ripple mdui-hidden-sm-up">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">account_circle</i>
+                    <div class="mdui-list-item-content">登录</div>
+                </li>
+            </a>
+            <a href="/register">
+                <li class="mdui-list-item mdui-ripple mdui-hidden-sm-up">
+                    <i class="mdui-list-item-icon mdui-icon material-icons">add_circle</i>
+                    <div class="mdui-list-item-content">注册</div>
+                </li>
+            </a>
+        </ul>
+        {% endif %}
+    </div>
+    <script src="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="{{url_for('static', filename='script/hash.js')}}"></script>
+    <script src="{{url_for('static', filename='script/gui.js')}}"></script>
+    <script src="{{url_for('static', filename='script/account.js')}}"></script>
+    {% if requireLogin == False %}
+    <script>
+        //console.log("not reqi")
+    </script>
+    {% else %}
+    <script>
+        //console.log("require login")
+        cs_checkLogin()
+        setInterval(function () { cs_checkLogin() }, 10000);
+    </script>
+    {% endif %}
+    {% block content %}{% endblock %}
+</body>
+
+</html>

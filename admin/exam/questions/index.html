@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+
+    .mdui-checkbox,
+    .mdui-radio {
+        padding-left: 25px !important;
+    }
+</style>
+
+<div class="mdui-container mdui-container-fluid">
+    {% include 'admin/tab.html' %}
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        Edit question
+        <br><br>
+        题号:
+        <button class="mdui-btn mdui-btn-icon mdui-ripple">
+            <i class="mdui-icon material-icons">keyboard_arrow_left</i>
+        </button>
+        <select class="mdui-select">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <button class="mdui-btn mdui-btn-icon mdui-ripple">
+            <i class="mdui-icon material-icons">keyboard_arrow_right</i>
+        </button>
+
+        <br>
+        <div class="mdui-tab mdui-tab-full-width" mdui-tab>
+            <a href="#tab1" class="mdui-tab-active mdui-ripple">编辑</a>
+            <a href="#tab2" class="mdui-ripple">预览</a>
+        </div>
+        <br>
+        <div id="tab1">
+            类型:
+            <label class="mdui-radio">
+                <input type="radio" name="cs_exam_type_radio" data-id="1" />
+                <i class="mdui-radio-icon"></i>
+                单项选择题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="cs_exam_type_radio" data-id="2" />
+                <i class="mdui-radio-icon"></i>
+                多项选择题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="cs_exam_type_radio" data-id="3" />
+                <i class="mdui-radio-icon"></i>
+                填空题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="cs_exam_type_radio" data-id="4" />
+                <i class="mdui-radio-icon"></i>
+                简答题
+            </label>
+            <label class="mdui-radio">
+                <input type="radio" name="cs_exam_type_radio" data-id="5" />
+                <i class="mdui-radio-icon"></i>
+                上传题
+            </label>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">问题 (Markdown)</label>
+                <textarea class="mdui-textfield-input" id="cs_exam_question"></textarea>
+            </div>
+            <br>
+            选项:
+            <br><br>
+            <div class="mdui-card mdui-card-content">
+                <div class="mdui-card-primary-title">A
+                    <button class="mdui-btn mdui-btn-icon mdui-ripple" style="float: right;">
+                        <i class="mdui-icon material-icons">delete</i>
+                    </button>
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">Markdown</label>
+                    <textarea class="mdui-textfield-input" id="cs_test"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="mdui-card mdui-card-content">
+                <div class="mdui-card-primary-title">B
+                    <button class="mdui-btn mdui-btn-icon mdui-ripple" style="float: right;">
+                        <i class="mdui-icon material-icons">delete</i>
+                    </button>
+                </div>
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">Markdown</label>
+                    <textarea class="mdui-textfield-input"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">本题解析</label>
+                <textarea class="mdui-textfield-input"></textarea>
+            </div>
+            <br>
+        </div>
+        <div id="tab2">
+            <div class="mdui-typo-headline" id="cs_q_body">
+            </div>
+
+        </div>
+        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="submit()">Submit</button>
+
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            var $ = mdui.$;
+            mdui.mutation()
+            data = {}
+            function submit() {
+                data["question"] = $("#cs_exam_question")[0].value
+                data["ans"] = $("#cs_test")[0].value
+                $("input[name='cs_exam_type_radio']").each(function (index, element) {
+                    if (this.checked == true) {
+                        data["type"] = this.dataset.id
+                    }
+                })
+                alert(JSON.stringify(data))
+                $("#cs_q_body")[0].innerHTML = `<div class="mdui-chip">
+                    <span class="mdui-chip-title">单项选择题</span>
+                </div>`+ marked.parse(data.question)
+
+            }
+        </script>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/login/login.css')}}" />
+
+{% endblock %}
+
+{% block content %}
+
+<div class="mdui-container mdui-container-fluid">
+    <div class="mdui-center cs-login-form">
+        <h1>登录</h1>
+        <form action="/">
+            <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-email">
+                <label class="mdui-textfield-label">邮箱</label><input class="mdui-textfield-input" name="email"
+                    type="text" required="" id="cs-login-email-input">
+                <div class="mdui-textfield-error">账号不能为空</div>
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-password">
+                <label class="mdui-textfield-label">密码</label><input class="mdui-textfield-input" name="password"
+                    type="password" required="" id="cs-login-password-input">
+                <div class="mdui-textfield-error">密码不能为空</div>
+            </div>
+
+        </form>
+        <button class="mdui-btn mdui-ripple mdui-color-theme-accent mdui-float-right" id="cs-login-btn">登录</button>
+        <div id="result"></div>
+    </div>
+</div>
+
+
+
+
+<script src="{{url_for('static', filename='script/login/login.js')}}"></script>
+{% endblock %}

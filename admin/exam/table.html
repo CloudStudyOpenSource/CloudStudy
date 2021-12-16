@@ -1,0 +1,27 @@
+<div class="mdui-table-fluid">
+    <table class="mdui-table mdui-table-selectable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>简介</th>
+                <th>用户组</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for each in examList %}
+            <tr>
+                <td>{{ each.id }}</td>
+                <td>{{ each.name }}</td>
+                <td>{{ each.description}}</td>
+                <td>{{ each.permissions}}</td>
+                <td>{{ each.startTime }}</td>
+                <td>{{ each.endTime}}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>

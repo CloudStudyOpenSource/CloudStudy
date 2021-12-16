@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/login/login.css')}}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="mdui-container mdui-container-fluid">
+    <div class="mdui-card mdui-card-content">
+        <div class="mdui-card-primary-title">个人资料</div>
+        <ul class="mdui-list">
+            <li class="mdui-list-item mdui-ripple" onclick="changeAvatar()">
+                <div class="mdui-list-item-avatar">
+                    <img src="" alt="avatar" id="cs_settings_avatar" />
+                </div>
+                <div class="mdui-list-item-content">头像</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">keyboard_arrow_right</i>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">assignment_ind</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">UID</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" id="cs_settings_userId"></div>
+                </div>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple" onclick="changeName()">
+                <i class="mdui-list-item-icon mdui-icon material-icons">account_circle</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">昵称</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" id="cs_settings_name"></div>
+                </div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">keyboard_arrow_right</i>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple" onclick="changeEmail()">
+                <i class="mdui-list-item-icon mdui-icon material-icons">email</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">邮箱</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" id="cs_settings_email"></div>
+                </div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">keyboard_arrow_right</i>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">group</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">用户组</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" id="cs_settings_group"></div>
+                </div>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">date_range</i>
+                <div class="mdui-list-item-content">
+                    <div class="mdui-list-item-title mdui-list-item-one-line">注册时间</div>
+                    <div class="mdui-list-item-text mdui-list-item-one-line" id="cs_settings_createTime"></div>
+                </div>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">data_usage</i>
+                <div class="mdui-list-item-content">Data usage</div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="mdui-card mdui-card-content">
+        <div class="mdui-card-primary-title">安全隐私</div>
+        <ul class="mdui-list">
+            <li class="mdui-list-item mdui-ripple" onclick="changePassword()">
+                <i class="mdui-list-item-icon mdui-icon material-icons">lock_outline</i>
+                <div class="mdui-list-item-content">密码</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">keyboard_arrow_right</i>
+            </li>
+
+
+        </ul>
+    </div>
+
+    <div class="mdui-card mdui-card-content">
+        <div class="mdui-card-primary-title">个性化</div>
+        <ul class="mdui-list">
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">color_lens</i>
+                <div class="mdui-list-item-content">主题配色(Unavailiable now)</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">keyboard_arrow_right</i>
+            </li>
+
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">invert_colors</i>
+                <div class="mdui-list-item-content">深色模式 </div>
+                <select class="mdui-select" id="cs_settings_darkmode" onchange="changeDarkMode()">
+                    <option value="1">跟随系统</option>
+                    <option value="2">浅色</option>
+                    <option value="3">深色</option>
+                </select>
+            </li>
+
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+<script>
+    var $ = mdui.$;
+    cs_checkLogin()
+    userSettings = {}
+    function renderSettings() {
+        $("#cs_settings_avatar")[0].src = userSettings.avatar;
+        $("#cs_settings_userId")[0].innerText = userSettings.id;
+        $("#cs_settings_name")[0].innerText = userSettings.name;
+        $("#cs_settings_email")[0].innerText = userSettings.email;
+        $("#cs_settings_group")[0].innerText = userSettings.group_name;
+        $("#cs_settings_createTime")[0].innerText = userSettings.createTime;
+        if (userSettings.settings == "{}") {
+            userSettings.settings = JSON.stringify({ "darkmode": 1 })
+        }
+        $("#cs_settings_darkmode")[0].value = JSON.parse(userSettings.settings).darkmode;
+    }
+    function getSettings() {
+        $.ajax({
+            method: 'GET',
+            url: '/api/user/settings/get',
+            async: false,
+            cache: false,
+            success: function (data) {
+                console.log(data, JSON.parse(data).data)
+                userSettings = JSON.parse(data).data;
+                renderSettings()
+            }
+        });
+    }
+    function uploadSettings() {
+        $.ajax({
+            method: 'GET',
+            url: '/api/user/settings/upload',
+            async: false,
+            cache: false,
+            data: {
+                data: JSON.stringify(userSettings)
+            },
+            success: function (data) {
+                data = JSON.parse(data)
+                if (data.message == "success") {
+                    mdui.snackbar({
+                        message: "设置更新成功",
+                        position: "right-top"
+                    })
+                } else {
+                    mdui.snackbar({
+                        message: "Error: " + data.data,
+                        position: "right-top"
+                    })
+                }
+            }
+        });
+    }
+    function changeAvatar() {
+            mdui.prompt('请输入新头像URL', '修改头像',
+                function (value) {
+                    userSettings.avatar = value;
+                    renderSettings()
+                    uploadSettings()
+                },
+                function (value) {
+
+                }
+            );
+        }
+    function changeName() {
+        mdui.prompt('请输入新昵称', '修改昵称',
+            function (value) {
+                userSettings.name = value;
+                renderSettings()
+                uploadSettings()
+            },
+            function (value) {
+
+            }
+        );
+    }
+    function changeEmail() {
+        mdui.prompt('请输入新邮箱', '修改邮箱',
+            function (value) {
+                userSettings.email = value;
+                renderSettings()
+                uploadSettings()
+            },
+            function (value) {
+
+            }
+        );
+    }
+    function changePassword() {
+        mdui.prompt('请输入原密码', '修改密码',
+            function (value) {
+                if (sha512(value) == userSettings.password) {
+                    mdui.prompt('请输入新密码', '修改密码',
+                        function (value) {
+                            userSettings.password=sha512(value)
+                            renderSettings()
+                            uploadSettings()
+                        },
+                        function (value) {
+
+                        }
+                    );
+                } else{
+                    mdui.alert("旧密码不符")
+                }
+            },
+            function (value) {
+
+            }
+        );
+    }
+    function changeDarkMode() {
+        var darkmode = JSON.parse(userSettings.settings)
+        darkmode.darkmode = $("#cs_settings_darkmode")[0].value
+        userSettings.settings = JSON.stringify(darkmode);
+        renderSettings()
+        uploadSettings()
+    }
+    getSettings()
+</script>
+{% endblock %}
