@@ -12,10 +12,11 @@ import mysql.connector
 from modules import cs_config
 
 engine = create_engine(
-    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True)  # echo=True
+    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True, echo=True)  # echo=True
 
 Base = declarative_base()
 metadata = Base.metadata
+
 
 
 class User(Base):
@@ -74,6 +75,7 @@ class Exam(Base):
     permissions = Column(JSON)
     startTime = Column(DateTime)
     endTime = Column(DateTime)
+    questions = Column(JSON)
 
     def __repr__(self):
         return "<Exam(id='%s', name='%s')>" % (
@@ -83,29 +85,9 @@ class Exam(Base):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
-class Question(Base):
-    __tablename__ = 'questions'
-
-    id = Column(INTEGER(11), primary_key=True)
-    examId = Column(INTEGER(11))
-    description = Column(Text)
-    permissions = Column(JSON)
-    startTime = Column(DateTime)
-    endTime = Column(DateTime)
-    questions = Column(JSON)
-
-    def __repr__(self):
-        return "<Question(id='%s',examId='%s' ,name='%s')>" % (
-            self.id, self.examId, self.name)
-
-    def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
-
-
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
-
 
 def commit():
     session.commit()
@@ -115,14 +97,6 @@ def add(*args):
     session.add(*args)
     commit()
 
-
-def checkFirstRun():
-    if(session.query(Group).count() == 0):
-        print(" * 欢迎使用CloudStudy! 正在初始化")
-        add(Group(name="管理员"))
-
-
-checkFirstRun()
 
 '''
 1. INSERT
@@ -136,6 +110,7 @@ cs_sql.session.query(User).filter(user.name == 'name')
 4. UPDATE
 cs_sql.session.query(User).filter(user.name == 'name')[0].name="newname"
 '''
+
 
 
 def initMysql():
