@@ -1,0 +1,23 @@
+<div class="mdui-table-fluid">
+    <table class="mdui-table mdui-table-selectable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>管理员权限</th>
+                <th>权限</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for each in groupList %}
+            <tr>
+                <td>{{ each.id }}</td>
+                <td>{{ each.name }}</td>
+                <td>{{ each.isAdmin }}</td>
+                <td>{{ each }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>

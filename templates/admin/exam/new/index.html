@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+
+    .mdui-checkbox,
+    .mdui-radio {
+        padding-left: 25px !important;
+    }
+</style>
+
+<div class="mdui-container mdui-container-fluid">
+    {% include 'admin/tab.html' %}
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        <div class="mdui-tab mdui-tab-full-width" mdui-tab>
+            <a href="#tab1" class="mdui-tab-active mdui-ripple">编辑</a>
+            <a href="#tab2" class="mdui-ripple" onclick="preview()">预览</a>
+        </div>
+        <div id="tab1">
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">名称</label>
+                <input class="mdui-textfield-input" maxlength="250" id="cs_exam_name_input"></input>
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label">简介</label>
+                <textarea class="mdui-textfield-input" id="cs_exam_desc_input"></textarea>
+                <div class="mdui-textfield-helper">支持Markdown</div>
+            </div>
+            <br>
+            开始时间:
+            <input id="cs_exam_st_date" type="date" class="mdui-color-transparent mdui-text-color-theme-text"
+                style="border: none;">
+            <input id="cs_exam_st_time" type="time" class="mdui-color-transparent mdui-text-color-theme-text"
+                style="border: none;" value="13:30">
+            <br><br>
+            结束时间:
+            <input id="cs_exam_et_date" type="date" class="mdui-color-transparent mdui-text-color-theme-text"
+                style="border: none;">
+            <input id="cs_exam_et_time" type="time" class="mdui-color-transparent mdui-text-color-theme-text"
+                style="border: none;" value="13:30">
+            <br><br>
+            分组:
+            {% for each in groupList %}
+            <label class="mdui-checkbox" style="padding-right:10px;">
+                <input type="checkbox" class="cs_exam_groups_input" data-id="{{each.id}}" data-name="{{each.name}}" />
+                <i class="mdui-checkbox-icon"></i>
+                {{each.name}}
+            </label>
+            {% endfor %}
+            <br><br>
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                onclick="submit()">提交</button>
+        </div>
+        <div id="tab2">
+            <div class="mdui-typo">
+                <h1 id="cs_exam_title"></h1>
+                <i class="mdui-icon material-icons">date_range</i> <span id="cs_exam_datetime"></span><br>
+                <i class="mdui-icon material-icons">group</i> <span id="cs_exam_groups"></span>
+                <hr />
+                <div class="mdui-typo" id="cs_exam_desc">
+                </div>
+            </div>
+
+
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            var $ = mdui.$;
+            data = {}
+            function generateJson() {
+                data["name"] = $("#cs_exam_name_input")[0].value
+                data["description"] = $("#cs_exam_desc_input")[0].value
+                data["startTime"] = $("#cs_exam_st_date")[0].value + " " + $("#cs_exam_st_time")[0].value + ":00"
+                data["endTime"] = $("#cs_exam_et_date")[0].value + " " + $("#cs_exam_et_time")[0].value + ":00"
+                data["groups"] = []
+                $(".cs_exam_groups_input").each(function (index, element) {
+                    if (this.checked == true) {
+                        data.groups.push({"id":this.dataset.id,"name":this.dataset.name})
+                    }
+                })
+                console.log(JSON.stringify(data))
+            }
+            function preview() {
+                generateJson();
+                $("#cs_exam_title")[0].innerHTML = data.name
+                $("#cs_exam_datetime")[0].innerHTML = data.startTime + " ~ " + data.endTime
+                groups_str=""
+                for (each in data.groups){
+                    groups_str+=data.groups[each].name
+                    groups_str+=", "
+                }
+                $("#cs_exam_groups")[0].innerHTML=groups_str
+                $("#cs_exam_desc")[0].innerHTML = marked.parse(data.description)
+            }
+            function submit() {
+                generateJson()
+                $.ajax({
+                    method: 'GET',
+                    url: '/api/admin/exam/new',
+                    async: false,
+                    cache: false,
+                    data: {
+                        data: JSON.stringify(data)
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        if (data.message == "success") {
+                            window.location.href = "/admin/exam"
+                        } else {
+                            mdui.snackbar({
+                                message: "Error: " + data.data,
+                                position: "right-top"
+                            })
+                        }
+                    }
+                });
+            }
+        </script>
+
+    </div>
+</div>
+{% endblock %}

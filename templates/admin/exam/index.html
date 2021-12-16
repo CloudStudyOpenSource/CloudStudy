@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="mdui-container mdui-container-fluid">
+    {% include 'admin/tab.html' %}
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        <a href="/admin/exam/new"><button
+                class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</button></a>
+        <a href="javascript:;" onclick="loadTable()"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
+        <br><br>
+        <div id="table"></div>
+        <script>
+            var $ = mdui.$;
+            var inst = new mdui.Dialog('#dialog');
+            function loadTable() {
+                $("#table").html(`<div class="mdui-spinner"></div>`);
+                mdui.mutation();
+                $.ajax({
+                    method: 'GET',
+                    url: '/admin/exam/table',
+                    cache: false,
+                    success: function (data) {
+                        $("#table").html(data);
+                        mdui.mutation();
+                    }
+                });
+            }
+            loadTable();
+        </script>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,25 @@
+<div class="mdui-table-fluid">
+    <table class="mdui-table mdui-table-selectable">
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>昵称</th>
+                <th>邮箱</th>
+                <th>用户组</th>
+                <th>最近登录</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for each in userList %}
+            <tr>
+                <td>{{ each.id }}</td>
+                <td>{{ each.name }}</td>
+                <td>{{ each.email }}</td>
+                <td>{{ each.group_name() }}(#{{each.group}})</td>
+                <td>{{ each.loginTime }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>

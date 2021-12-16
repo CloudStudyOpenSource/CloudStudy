@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .mdui-card {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="mdui-container mdui-container-fluid">
+    {% include 'admin/tab.html' %}
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
+        <a href="javascript:;" onclick="addUserInst.open()"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</a>
+        <a href="javascript:;" onclick="loadTable()"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
+        <div style="float:right">
+            Selected:
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense"
+                id="cs_table_del">Delete</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense"
+                id="cs_table_edit">Edit</a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-dense" id="cs_table_ban">Ban
+            </a>
+        </div>
+        <br><br>
+        <div id="table" onclick="getTb()" onmousemove="getTb()"></div>
+        <div class="mdui-dialog" id="dialog">
+            <div class="mdui-dialog-title">添加用户</div>
+            <div class="mdui-dialog-content">
+                <form action="/">
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-name">
+                        <label class="mdui-textfield-label">昵称</label><input class="mdui-textfield-input" name="name"
+                            type="text" required="" id="cs-login-name-input">
+                        <div class="mdui-textfield-error">昵称不能为空</div>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-email">
+                        <label class="mdui-textfield-label">邮箱</label><input class="mdui-textfield-input" name="email"
+                            type="text" required="" id="cs-login-email-input">
+                        <div class="mdui-textfield-error">邮箱不能为空</div>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label" id="cs-login-password">
+                        <label class="mdui-textfield-label">密码</label><input class="mdui-textfield-input"
+                            name="password" type="password" required="" id="cs-login-password-input">
+                        <div class="mdui-textfield-error">密码不能为空</div>
+                    </div>
+
+                </form>
+                <div id="result"></div>
+            </div>
+            <div class="mdui-dialog-actions">
+                <button class="mdui-btn mdui-ripple" onclick="addUserInst.close()">取消</button>
+                <button class="mdui-btn mdui-ripple" onclick="addUser()">确定</button>
+            </div>
+        </div>
+        <script>
+            var $ = mdui.$;
+            var addUserInst = new mdui.Dialog('#dialog');
+            function loadTable() {
+                $("#table").html(`<div class="mdui-spinner"></div>`);
+                mdui.mutation();
+                $.ajax({
+                    method: 'GET',
+                    url: '/admin/user/table',
+                    cache: false,
+                    success: function (data) {
+                        $("#table").html(data);
+                        mdui.mutation();
+                    }
+                });
+                getTb()
+            }
+            loadTable();
+            function addUser() {
+                var input_name = $("#cs-login-name-input").val();
+                var input_email = $("#cs-login-email-input").val();
+                var input_pwd = $("#cs-login-password-input").val();
+                $("#cs-login-name").removeClass("mdui-textfield-invalid");
+                $("#cs-login-email").removeClass("mdui-textfield-invalid");
+                $("#cs-login-password").removeClass("mdui-textfield-invalid");
+                if (input_name == "") {
+                    $("#cs-login-name").addClass("mdui-textfield-invalid");
+                } else {
+                    if (input_email == "") {
+                        $("#cs-login-email").addClass("mdui-textfield-invalid");
+                    } else {
+                        if (input_pwd == "") {
+                            $("#cs-login-password").addClass("mdui-textfield-invalid");
+                        } else {
+                            cs_register(input_name, input_email, input_pwd, redirect = false)
+                            addUserInst.close()
+                            loadTable()
+
+                        }
+                    }
+                }
+
+            }
+            onselect = []
+            function getTb() {
+                onselect = []
+                $('#table').find('.mdui-table-row-selected').each(function (index, element) {
+                    onselect.push(this.children[1].innerHTML)
+                })
+                if (onselect.length != 1) {
+                    $("#cs_table_edit").attr('disabled', "");
+                } else {
+                    $("#cs_table_edit").removeAttr('disabled');
+                }
+                if (onselect.length == 0) {
+                    $("#cs_table_del").attr('disabled', "");
+                } else {
+                    $("#cs_table_del").removeAttr('disabled');
+                }
+                //console.log(onselect)
+            }
+        </script>
+    </div>
+</div>
+
+
+{% endblock %}
