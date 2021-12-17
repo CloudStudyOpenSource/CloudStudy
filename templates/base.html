@@ -1,16 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-cmn-Hans">
+
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, shrink-to-fit=no" />
     <meta name="renderer" content="webkit" />
     <meta name="force-rendering" content="webkit" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="description" content="云学习 | 在线考试系统">
+    <meta name="description" content="云学习 | 在线考试系统" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}" />
     {% block css %}{% endblock %}
-    <link rel="icon" type="image/png" href="{{url_for('static', filename='favicon.png')}}">
+    <link rel="icon" type="image/svg" href="{{url_for('static', filename='favicon.svg')}}" />
 
     {% if title %}
     <title>{{config.siteName}} | {{title}}</title>
@@ -19,7 +20,11 @@
     {% endif %}
 </head>
 
-<body class="mdui-appbar-with-toolbar mdui-theme-accent-indigo mdui-theme-primary-deep-purple">
+<body class="
+      mdui-appbar-with-toolbar
+      mdui-theme-accent-indigo
+      mdui-theme-primary-deep-purple
+    ">
     <div class="mdui-appbar mdui-appbar-fixed" id="cs-toolbar">
         {% if user %}
         <div class="mdui-toolbar mdui-color-theme">
@@ -30,12 +35,12 @@
             <a href="javascript:;" class=""
                 mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
                 <div class="mdui-card-header">
-                    <img class="mdui-card-header-avatar" src="{{user.avatar}}">
+                    <img class="mdui-card-header-avatar" src="{{user.avatar}}" />
                     <div class="mdui-card-header-title">{{user.name}}</div>
                     <div class="mdui-card-header-subtitle">{{user.group_name}}</div>
                 </div>
             </a>
-            <ul class="mdui-menu " id="example-attr">
+            <ul class="mdui-menu" id="example-attr">
                 <li class="mdui-menu-item">
                     <a href="javascript:;" class="mdui-ripple">菜单</a>
                 </li>
@@ -50,7 +55,6 @@
                     <a href="javascript:;" onclick="cs_logout()" class="mdui-ripple">退出登录</a>
                 </li>
             </ul>
-
         </div>
         {% else %}
         <div class="mdui-toolbar mdui-color-theme">
@@ -139,17 +143,15 @@
     <script src="{{url_for('static', filename='script/gui.js')}}"></script>
     <script src="{{url_for('static', filename='script/account.js')}}"></script>
     {% if requireLogin == False %}
-    <script>
-        //console.log("not reqi")
-    </script>
+    <script></script>
     {% else %}
     <script>
-        //console.log("require login")
-        cs_checkLogin()
-        setInterval(function () { cs_checkLogin() }, 10000);
+        cs_checkLogin();
+        setInterval(function () {
+            cs_checkLogin();
+        }, 10000);
     </script>
-    {% endif %}
-    {% block content %}{% endblock %}
+    {% endif %} {% block content %}{% endblock %}
 </body>
 
 </html>

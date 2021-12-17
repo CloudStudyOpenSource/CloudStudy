@@ -52,8 +52,7 @@
             </label>
             {% endfor %}
             <br><br>
-            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
-                onclick="submit()">提交</button>
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="submit()">提交</button>
         </div>
         <div id="tab2">
             <div class="mdui-typo">
@@ -71,6 +70,7 @@
         <script>
             var $ = mdui.$;
             data = {}
+
             function generateJson() {
                 data["name"] = $("#cs_exam_name_input")[0].value
                 data["description"] = $("#cs_exam_desc_input")[0].value
@@ -79,23 +79,28 @@
                 data["groups"] = []
                 $(".cs_exam_groups_input").each(function (index, element) {
                     if (this.checked == true) {
-                        data.groups.push({"id":this.dataset.id,"name":this.dataset.name})
+                        data.groups.push({
+                            "id": this.dataset.id,
+                            "name": this.dataset.name
+                        })
                     }
                 })
                 console.log(JSON.stringify(data))
             }
+
             function preview() {
                 generateJson();
                 $("#cs_exam_title")[0].innerHTML = data.name
                 $("#cs_exam_datetime")[0].innerHTML = data.startTime + " ~ " + data.endTime
-                groups_str=""
-                for (each in data.groups){
-                    groups_str+=data.groups[each].name
-                    groups_str+=", "
+                groups_str = ""
+                for (each in data.groups) {
+                    groups_str += data.groups[each].name
+                    groups_str += ", "
                 }
-                $("#cs_exam_groups")[0].innerHTML=groups_str
+                $("#cs_exam_groups")[0].innerHTML = groups_str
                 $("#cs_exam_desc")[0].innerHTML = marked.parse(data.description)
             }
+
             function submit() {
                 generateJson()
                 $.ajax({

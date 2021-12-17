@@ -1,18 +1,12 @@
-{% extends "base.html" %}
-
-{% block css %}
+{% extends "base.html" %} {% block css %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/login/login.css')}}" />
 
-{% endblock %}
+{% endblock %} {% block content %}
 
-{% block content %}
+<div class="mdui-container mdui-container-fluid"></div>
 
-<div class="mdui-container mdui-container-fluid">
-
-</div>
-
-
-
-
-<script>var $ = mdui.$; cs_checkLogin()</script>
+<script>
+    var $ = mdui.$;
+    cs_checkLogin();
+</script>
 {% endblock %}

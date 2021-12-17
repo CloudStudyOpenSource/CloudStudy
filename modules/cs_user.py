@@ -9,8 +9,6 @@ from modules import cs_config, cs_encrypt, cs_sql, cs_tools
 from server import app
 
 
-
-
 def checkTokenAvailable(token):
     if(token != None):
         fetch = cs_sql.session.query(cs_sql.User).filter(
@@ -80,7 +78,7 @@ def api_user_register(name, email, pwd):
         cs_sql.User.email == email)
     if(fetch.count() == 0):
         cs_sql.add(cs_sql.User(name=name, email=email,
-                   avatar="/static/favicon.png", password=pwd, group="1", createTime=datetime.now(), settings="{}"))
+                   avatar="/static/favicon.svg", password=pwd, group="1", createTime=datetime.now(), settings="{}"))
         cs_sql.commit()
         return(cs_tools.jsonResponse("success", ""))
     else:
