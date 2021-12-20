@@ -10,6 +10,8 @@
     <meta name="description" content="云学习 | 在线考试系统" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/global.css')}}" />
+    <script src="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     {% block css %}{% endblock %}
     <link rel="icon" type="image/svg" href="{{url_for('static', filename='favicon.svg')}}" />
 
@@ -33,14 +35,20 @@
             <a href="/dashbroad" class="mdui-typo-headline">CloudStudy</a>
             <div class="mdui-toolbar-spacer"></div>
             <a href="javascript:;" class=""
-                mdui-menu="{target: '#example-attr',position:'auto',align:'right',covered:false}">
-                <div class="mdui-card-header">
-                    <img class="mdui-card-header-avatar" src="{{user.avatar}}" />
-                    <div class="mdui-card-header-title">{{user.name}}</div>
-                    <div class="mdui-card-header-subtitle">{{user.group_name}}</div>
-                </div>
+                mdui-menu="{target: '#cs-appbar-user',position:'auto',align:'right',covered:false}">
+                <li class="cs-appbar-user-user mdui-list-item mdui-ripple">
+                    <div class="cs-appbar-user-avatar mdui-list-item-avatar">
+                        <img src="{{user.avatar}}" />
+                    </div>
+                    <div class="cs-appbar-user-userinfo mdui-list-item-content">
+                        <div class="mdui-list-item-title">{{user.name}}</div>
+                        <div class="mdui-list-item-text mdui-list-item-one-line">
+                            {{user.group_name}}
+                        </div>
+                    </div>
+                </li>
             </a>
-            <ul class="mdui-menu" id="example-attr">
+            <ul class="mdui-menu" id="cs-appbar-user">
                 <li class="mdui-menu-item">
                     <a href="javascript:;" class="mdui-ripple">菜单</a>
                 </li>
@@ -137,10 +145,8 @@
         </ul>
         {% endif %}
     </div>
-    <script src="//cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="{{url_for('static', filename='script/hash.js')}}"></script>
-    <script src="{{url_for('static', filename='script/gui.js')}}"></script>
+    <script src="{{url_for('static', filename='script/global.js')}}"></script>
     <script src="{{url_for('static', filename='script/account.js')}}"></script>
     {% if requireLogin == False %}
     <script></script>

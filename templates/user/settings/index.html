@@ -109,7 +109,7 @@
         $("#cs_settings_name")[0].innerText = userSettings.name;
         $("#cs_settings_email")[0].innerText = userSettings.email;
         $("#cs_settings_group")[0].innerText = userSettings.group_name;
-        $("#cs_settings_createTime")[0].innerText = userSettings.createTime;
+        $("#cs_settings_createTime")[0].innerText = new Date(userSettings.createTime * 1000).format("yyyy-MM-dd hh:mm");
         if (userSettings.settings == "{}") {
             userSettings.settings = JSON.stringify({
                 darkmode: 1,

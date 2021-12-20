@@ -78,7 +78,7 @@ def api_user_register(name, email, pwd):
         cs_sql.User.email == email)
     if(fetch.count() == 0):
         cs_sql.add(cs_sql.User(name=name, email=email,
-                   avatar="/static/favicon.svg", password=pwd, group="1", createTime=datetime.now(), settings="{}"))
+                   avatar="/static/favicon.svg", password=pwd, group="1", createTime=int(time.time()), settings="{}"))
         cs_sql.commit()
         return(cs_tools.jsonResponse("success", ""))
     else:
@@ -111,10 +111,22 @@ def api_get_user_object(token):
 def api_user_getlist():
     # jinja2渲染时使用接口，admin获取用户列表
     fetch = cs_sql.session.query(cs_sql.User).all()
-    return(fetch)
+    r = []
+    for each in fetch:
+        r.append(each.to_dict())
+    return(json.dumps(r))
 
 
 def api_group_getlist():
     # jinja2渲染时使用接口，admin获取分组列表
     fetch = cs_sql.session.query(cs_sql.Group).all()
     return(fetch)
+
+
+def api_group_getlist_json():
+    # jinja2渲染时使用接口，admin获取分组列表
+    fetch = cs_sql.session.query(cs_sql.Group).all()
+    r = []
+    for each in fetch:
+        r.append({"name": each.name, "id": each.id})
+    return(cs_tools.jsonResponse("success", r))

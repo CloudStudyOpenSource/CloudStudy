@@ -1,43 +1,102 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-<style>
-    .mdui-card {
-        margin-bottom: 20px;
-    }
-</style>
+{% extends "base.html" %} {% block content %}
 
 <div class="mdui-container mdui-container-fluid">
     {% include 'admin/tab.html' %}
-    <div style="padding-left: 5%;padding-right: 5%;padding-top: 20px;">
-        <a href="/admin/exam/new"><button
-                class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Add</button></a>
+    <div style="padding-left: 5%; padding-right: 5%; padding-top: 20px">
+        <a href="/admin/exam/edit"><button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">
+                Add
+            </button></a>
         <a href="javascript:;" onclick="loadTable()"
             class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">Reload</a>
-        <br><br>
+        <br /><br />
         <div id="table"></div>
         <script>
             var $ = mdui.$;
-            var inst = new mdui.Dialog('#dialog');
 
             function loadTable() {
-                $("#table").html(`<div class="mdui-spinner"></div>`);
+                $("#table").html(
+                    `<div class="mdui-spinner mdui-center" style="margin-top: 100px;">`
+                );
                 mdui.mutation();
                 $.ajax({
-                    method: 'GET',
-                    url: '/admin/exam/table',
+                    method: "GET",
+                    url: "/admin/exam/table",
                     cache: false,
                     success: function (data) {
-                        $("#table").html(data);
+                        str = `
+                        <div class="mdui-table-fluid">
+                            <table class="mdui-table mdui-table-selectable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>名称</th>
+                                        <th>简介</th>
+                                        <th>用户组</th>
+                                        <th>开始时间</th>
+                                        <th>结束时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    `;
+                        data = JSON.parse(data);
+                        console.log(data);
+                        for (each in data) {
+                            str += `
+                            <tr>
+                                <td>${data[each].id}</td>
+                                <td>${data[each].name}</td>
+                                <td>
+                                    <details>
+                                        <summary mdui-tooltip="{content: '点击展开'}"> 
+                                            ${data[each].description.substring(
+                                              0,
+                                              20
+                                            )}</summary>
+                                        ${data[each].description}
+                                    </details>
+                                </td>
+                                <td>
+                                    <div class="mdui-chip">
+                                        <span class="mdui-chip-title">${data[each].permissions.join(`</span></div> <div class="mdui-chip"><span class="mdui-chip-title">`)}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>${new Date(
+                                  data[each].startTime * 1000
+                                ).format("yyyy-MM-dd hh:mm")}
+                                </td>
+                                <td>${new Date(
+                                  data[each].endTime * 1000
+                                ).format("yyyy-MM-dd hh:mm")}</td>
+                                <td>
+                                    <a class="mdui-btn mdui-btn-icon mdui-ripple"
+                                        href="/admin/exam/edit?id=${
+                                          data[each].id
+                                        }">
+                                        <i class="mdui-icon material-icons">edit</i>
+                                    </a>
+                                    <button class="mdui-btn mdui-btn-icon mdui-ripple">
+                                        <i class="mdui-icon material-icons">delete</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                            console.log(data[each]);
+                        }
+                        str += `
+                                </tbody>
+                            </table>
+                        </div>
+                        `;
+                        $("#table").html(str);
                         mdui.mutation();
-                    }
+                    },
                 });
             }
             loadTable();
         </script>
     </div>
 </div>
-
 
 {% endblock %}

@@ -2,11 +2,7 @@
 
 {% block content %}
 
-<style>
-    .mdui-card {
-        margin-bottom: 20px;
-    }
-</style>
+
 
 <div class="mdui-container mdui-container-fluid">
     {% include 'admin/tab.html' %}
@@ -19,7 +15,7 @@
             var $ = mdui.$;
 
             function loadTable() {
-                $("#table").html(`<div class="mdui-spinner"></div>`);
+                $("#table").html(`<div class="mdui-spinner mdui-center" style="margin-top: 100px;">`);
                 mdui.mutation();
                 $.ajax({
                     method: 'GET',

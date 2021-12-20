@@ -1,10 +1,6 @@
 {% extends "base.html" %} {% block content %}
 
-<style>
-    .mdui-card {
-        margin-bottom: 20px;
-    }
-</style>
+
 
 <div class="mdui-container mdui-container-fluid">
     {% include 'admin/tab.html' %}
@@ -58,14 +54,47 @@
             var addUserInst = new mdui.Dialog("#dialog");
 
             function loadTable() {
-                $("#table").html(`<div class="mdui-spinner"></div>`);
+                $("#table").html(`<div class="mdui-spinner mdui-center" style="margin-top: 100px;">`);
                 mdui.mutation();
                 $.ajax({
                     method: "GET",
                     url: "/admin/user/table",
                     cache: false,
                     success: function (data) {
-                        $("#table").html(data);
+                        str = `
+<div class="mdui-table-fluid">
+    <table class="mdui-table mdui-table-selectable">
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>昵称</th>
+                <th>邮箱</th>
+                <th>用户组</th>
+                <th>最近登录</th>
+            </tr>
+        </thead>
+        <tbody>
+`
+                        data = JSON.parse(data)
+                        console.log(data)
+                        for (each in data) {
+                            str += `
+<tr>
+    <td>${ data[each].id }</td>
+    <td>${ data[each].name }</td>
+    <td>${ data[each].email }</td>
+    <td>${ data[each].group_name }(#${data[each].group})</td>
+    <td>${ data[each].loginTime != null ? new Date(data[each].loginTime*1000).format("yyyy-MM-dd hh:mm") : "无"}</td>
+</tr>
+`
+                            console.log(data[each])
+                        }
+                        str += `
+        </tbody>
+        </table>
+        </div>
+        `
+                        $("#table").html(str);
                         mdui.mutation();
                     },
                 });

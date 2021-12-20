@@ -1,6 +1,8 @@
 # http://pac-api.timfang.xyz:11451/
 # coding=utf-8
 import os
+import sys
+
 
 from flask import Flask, render_template, request
 from flask.json import jsonify
@@ -8,13 +10,18 @@ from werkzeug.utils import redirect
 
 from modules import cs_user, cs_sql, cs_exam
 
+if("init" in sys.argv):
+    cs_sql.sqlinit()
+    exit()
+
+if("remove" in sys.argv):
+    cs_sql.sqlrm()
+    exit()
+
 app = Flask(__name__)
 
+
 config = {"siteName": "CloudStudy"}
-
-
-# 连接数据库
-#cs_sql.connectMysql()
 
 
 # home
@@ -140,10 +147,7 @@ def admin_user():
 
 @ app.route('/admin/user/table')
 def admin_user_table():
-    return (render_template(
-        'admin/user/table.html',
-        userList=cs_user.api_user_getlist()
-    ))
+    return (cs_user.api_user_getlist())
 
 
 @ app.route('/admin/exam')
@@ -158,16 +162,13 @@ def admin_exam():
 
 @ app.route('/admin/exam/table')
 def admin_exam_table():
-    return (render_template(
-        'admin/exam/table.html',
-        examList=cs_exam.api_exam_getlist()
-    ))
+    return (cs_exam.api_exam_getlist())
 
 
-@ app.route('/admin/exam/new')
+@ app.route('/admin/exam/edit')
 def admin_exam_new():
     return (render_template(
-        'admin/exam/new/index.html',
+        'admin/exam/edit/index.html',
         groupList=cs_user.api_group_getlist(),
         user=cs_user.api_get_user_object(request.cookies.get("cs_token"))
     ))
@@ -223,11 +224,30 @@ def api_user_settings_upload():
     return cs_user.api_upload_user_data(token, data)
 
 
+@ app.route('/api/group/getlistjson')
+def api_group_getlistjson():
+    return cs_user.api_group_getlist_json()
+
+
+@ app.route('/api/exam/get')
+def admin_exam_get():
+    id = request.headers.get('cs_id')
+    return cs_exam.api_exam_get(id)
+
+
 @ app.route('/api/admin/exam/new')
 def api_admin_exam_new():
     token = request.cookies.get("cs_token")
     data = request.args.get("data")
     return cs_exam.api_exam_new(data)
+
+
+@ app.route('/api/admin/exam/update')
+def api_admin_exam_update():
+    token = request.cookies.get("cs_token")
+    data = request.args.get("data")
+    id = int(request.args.get("id"))
+    return cs_exam.api_exam_update(id,data)
 
 
 @ app.after_request

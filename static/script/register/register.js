@@ -24,5 +24,5 @@ document.getElementById('cs-login-btn').addEventListener('click', function () {
         }
     }
     $("#cs-login-btn")[0].disabled = false;
-    $("#cs-login-btn").html(`登录`);
+    $("#cs-login-btn").html(`注册`);
 });

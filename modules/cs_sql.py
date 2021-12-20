@@ -1,22 +1,21 @@
 import datetime
 
-from sqlalchemy import (Column, DateTime, String, Text,
+from sqlalchemy import (Column, String, Text,
                         create_engine)
 from sqlalchemy.dialects.mysql import INTEGER, LONGTEXT
 from sqlalchemy.dialects.mysql.json import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.sql.sqltypes import Boolean
+from sqlalchemy.sql.sqltypes import BigInteger, Boolean
 import mysql.connector
 
 from modules import cs_config
 
 engine = create_engine(
-    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True, echo=True)  # echo=True
+    "mysql://%s:%s@%s/%s" % (cs_config.mysql["user"], cs_config.mysql["password"], cs_config.mysql["host"], cs_config.mysql["database"]), future=True)  # echo=True
 
 Base = declarative_base()
 metadata = Base.metadata
-
 
 
 class User(Base):
@@ -28,9 +27,9 @@ class User(Base):
     avatar = Column(LONGTEXT)
     password = Column(String(128))
     group = Column(INTEGER(11))
-    createTime = Column(DateTime)
-    updateTime = Column(DateTime)
-    loginTime = Column(DateTime)
+    createTime = Column(BigInteger)
+    updateTime = Column(BigInteger)
+    loginTime = Column(BigInteger)
     loginToken = Column(String(128))
     settings = Column(Text)
 
@@ -55,8 +54,8 @@ class Group(Base):
     id = Column(INTEGER(11), primary_key=True)
     name = Column(String(20))
     isAdmin = Column(Boolean)
-    createTime = Column(DateTime)
-    updateTime = Column(DateTime)
+    createTime = Column(BigInteger)
+    updateTime = Column(BigInteger)
 
     def __repr__(self):
         return "<Group(id='%s', name='%s')>" % (
@@ -73,8 +72,8 @@ class Exam(Base):
     name = Column(String(250))
     description = Column(Text)
     permissions = Column(JSON)
-    startTime = Column(DateTime)
-    endTime = Column(DateTime)
+    startTime = Column(BigInteger)
+    endTime = Column(BigInteger)
     questions = Column(JSON)
 
     def __repr__(self):
@@ -89,6 +88,7 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+
 def commit():
     session.commit()
 
@@ -97,6 +97,11 @@ def add(*args):
     session.add(*args)
     commit()
 
+def sqlinit():
+    add(Group(name="管理员"))
+
+def sqlrm():
+    Base.metadata.drop_all(engine)
 
 '''
 1. INSERT
@@ -110,7 +115,6 @@ cs_sql.session.query(User).filter(user.name == 'name')
 4. UPDATE
 cs_sql.session.query(User).filter(user.name == 'name')[0].name="newname"
 '''
-
 
 
 def initMysql():

@@ -2,16 +2,6 @@
 
 {% block content %}
 
-<style>
-    .mdui-card {
-        margin-bottom: 20px;
-    }
-
-    .mdui-checkbox,
-    .mdui-radio {
-        padding-left: 25px !important;
-    }
-</style>
 
 <div class="mdui-container mdui-container-fluid">
     {% include 'admin/tab.html' %}
@@ -97,19 +87,24 @@
                     <textarea class="mdui-textfield-input"></textarea>
                 </div>
             </div>
+            <button class="mdui-btn mdui-ripple"><i class="mdui-icon material-icons">add</i>Add</button>
             <br>
+            <br>
+            解析:
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label">本题解析</label>
+                <label class="mdui-textfield-label">Markdown</label>
                 <textarea class="mdui-textfield-input"></textarea>
             </div>
             <br>
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                onclick="submit()">Submit</button>
         </div>
         <div id="tab2">
             <div class="mdui-typo-headline" id="cs_q_body">
             </div>
 
         </div>
-        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="submit()">Submit</button>
+
 
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>

@@ -1,3 +1,71 @@
-.mdui-overlay-show{
+.mdui-overlay-show {
     backdrop-filter: blur(20px);
+}
+
+
+.cs-appbar-user-user {
+    border-radius: 2px;
+}
+
+.cs-appbar-user-avatar {
+    margin: unset !important;
+}
+
+.cs-appbar-user-userinfo {
+    padding: unset !important;
+}
+
+.mdui-card {
+    margin-bottom: 20px;
+}
+
+.mdui-checkbox,
+.mdui-radio {
+    padding-left: 25px !important;
+}
+
+.cs-dashbroad-calendar {
+    margin-top: 30px;
+    margin-bottom: 25px;
+}
+
+.cs-dashbroad-month {
+    display: inline-block;
+    width: 20px;
+    vertical-align: top;
+    line-height: 17px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.cs-dashbroad-day {
+    display: inline-block;
+    font-size: 6rem;
+    vertical-align: top;
+    line-height: 55px;
+    font-weight: bolder;
+}
+
+.cs-dashbroad-week {
+    display: inline-block;
+    width: 20px;
+    vertical-align: top;
+    line-height: 17px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+td {
+    white-space: nowrap;
+}
+
+summary {
+    cursor: pointer;
+}
+
+.mdui-table-fluid {
+    border-radius: 2px;
+}
+.mdui-list-item{
+    border-radius: 2px;
 }

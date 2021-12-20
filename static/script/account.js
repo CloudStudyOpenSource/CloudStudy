@@ -1,3 +1,4 @@
+var $ = mdui.$;
 function cs_checkLogin() {
     //console.log("token", Cookies.get("cs_token"))
     $.ajax({
